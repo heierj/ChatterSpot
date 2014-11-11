@@ -7,9 +7,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.List;
-
 import Shared.Message;
-
 import com.google.gson.Gson;
 
 
