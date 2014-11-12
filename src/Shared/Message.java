@@ -15,6 +15,7 @@ public class Message {
 	/**
 	 * This constructor will set the time stamp of the message to but the 
 	 * current time
+	 * 
 	 * @param username of the message creator
 	 * @param message content of message
 	 * @param chatNumber the chat room which the message belongs in

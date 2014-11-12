@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ForkJoinPool;
 
-//import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpServer;
+
 
 /** 
  * Class ServerMain is a RESTful back-end server application for ChatterSpot.
@@ -19,7 +20,7 @@ public class ServerMain {
 	 * Begin running the ChatterSpot server
 	 */
 	public static void main(String[] args) {
-/**		HttpServer server = null;
+		HttpServer server = null;
 		
 		try {
 			server = HttpServer.create(new InetSocketAddress(PORT_NUM), 0);
@@ -34,6 +35,6 @@ public class ServerMain {
 		server.createContext("/", new ClientHandler());
 		
 		server.start();
-*/
+
 	}
 }
