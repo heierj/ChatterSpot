@@ -16,7 +16,7 @@ public class MainActivity extends ActionBarActivity {
 	public final static String EXTRA_MESSAGE = "com.example.chatterspot.MESSAGE";
 	private List<String> message = new ArrayList<String>();
 	private ArrayAdapter<String> adapter;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
