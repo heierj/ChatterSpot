@@ -35,6 +35,5 @@ public class ServerMain {
 		server.createContext("/", new ClientHandler());
 		
 		server.start();
-
 	}
 }

@@ -3,6 +3,8 @@ package com.example.chatterspot;
 import java.util.ArrayList;
 import java.util.List;
 
+import Client.ChatClient;
+import Shared.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,6 +18,7 @@ public class MainActivity extends ActionBarActivity {
 	public final static String EXTRA_MESSAGE = "com.example.chatterspot.MESSAGE";
 	private List<String> message = new ArrayList<String>();
 	private ArrayAdapter<String> adapter;
+	private final static String USERNAME = "Jordan";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +27,7 @@ public class MainActivity extends ActionBarActivity {
 		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, message);
 		ListView messages = (ListView) findViewById(R.id.messages);
 		messages.setAdapter(adapter);
+		
 	}
 
 	@Override
@@ -48,6 +52,10 @@ public class MainActivity extends ActionBarActivity {
 	/** Called when the user clicks the Send button */
 	public void sendMessage(View view) {
 		EditText editText = (EditText) findViewById(R.id.edit_message);
+		
+		Message newMessage = new Message(USERNAME, editText.getText().toString(), 0);
+		new ChatClient.SendMessage().execute(newMessage);
+		
 		adapter.add(editText.getText().toString());
 	}
 	
