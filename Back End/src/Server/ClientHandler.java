@@ -3,6 +3,7 @@ package Server;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -133,5 +134,11 @@ public class ClientHandler implements HttpHandler {
 		
 		// TODO: Parse requestBody JSON
 		// TODO: Update DB to hold the message attached in the POST
+		try {
+			databaseOperations.addMessage(databaseOperations.getConnection(), "");
+		} catch (SQLException | URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
