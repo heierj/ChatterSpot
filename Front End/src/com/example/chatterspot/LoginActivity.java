@@ -39,7 +39,7 @@ public class LoginActivity extends Activity {
 	public void startChatting(View view) {
 		EditText editText = (EditText) findViewById(R.id.enter_username);
 		
-		Intent intent = new Intent(this, MainActivity.class);
+		Intent intent = new Intent(this, ChatActivity.class);
 	    String username = editText.getText().toString();
 	    intent.putExtra(USERNAME, username);
 	    startActivity(intent);

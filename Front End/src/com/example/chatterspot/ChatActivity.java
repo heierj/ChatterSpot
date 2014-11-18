@@ -16,7 +16,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-public class MainActivity extends ActionBarActivity {
+public class ChatActivity extends ActionBarActivity {
 	public final static String EXTRA_MESSAGE = "com.example.chatterspot.MESSAGE";
 	private List<HashMap<String, String>> messages;
 	private SimpleAdapter adapter;
@@ -25,7 +25,7 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_chat);
 		
 		// Get the username from the intent
 	    Intent intent = getIntent();
@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.chat, menu);
 		return true;
 	}
 
