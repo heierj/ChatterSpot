@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class databaseOperations {
-	private static Connection getConnection() throws URISyntaxException, SQLException {
+	public static Connection getConnection() throws URISyntaxException, SQLException {
 	    URI dbUri = new URI("postgres://wmocemjkyothtq:7ta5V10mOt12ObvORMQExVSicx@ec2-54-83-204-244.compute-1.amazonaws.com:5432/d9jfi2n6fi73a2");
 	    String username = dbUri.getUserInfo().split(":")[0];
 	    String password = dbUri.getUserInfo().split(":")[1];
@@ -23,13 +23,12 @@ public class databaseOperations {
 	    return DriverManager.getConnection(dbUrl, username, password);
 	}
 	
-	private static void addMessage(Connection dbConnection, String message) throws SQLException {
+	public static void addMessage(Connection dbConnection, String message) throws SQLException {
 		String insertTableSQL = "INSERT INTO messages"
 				              + "(text, timestamp) VALUES" + "( '" + message + "', 'now')";
 		Statement statement = null;
 		try {
-			statement = dbConnection.createStatement();
-			System.out.println(insertTableSQL);
+			statement = dbConnection.createStatement();;
 
 			// execute insert SQL statement
 			statement.executeUpdate(insertTableSQL);
@@ -43,7 +42,7 @@ public class databaseOperations {
 		}
 	}
 	
-	private static void readMessage(Connection dbConnection, int i) throws SQLException {
+	public static ResultSet readMessage(Connection dbConnection) throws SQLException {
 		String selectTableSQL = "SELECT id, text, timestamp from messages";
 		Statement statement = null;
 		try {
@@ -51,17 +50,7 @@ public class databaseOperations {
 
 				ResultSet rs = statement.executeQuery(selectTableSQL);
 				 
-				while (rs.next()) {
-	 
-					String userid = rs.getString("ID");
-					String username = rs.getString("text");
-					String timestamp = rs.getString("timestamp");
-	 
-					System.out.println("ID : " + userid);
-					System.out.println("text : " + username);
-					System.out.println("timestamp : " + timestamp);
-	 
-				}
+				return rs;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -69,21 +58,8 @@ public class databaseOperations {
 			if(statement != null) {
 				statement.close();
 			}
-}
-		
-	}
-	
-	public static void main(String[] args) {
-		try {
-			Connection db = getConnection();
-			addMessage(db, "hello");
-			readMessage(db, 3);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		return null;
+		
 	}
 }
