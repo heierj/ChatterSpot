@@ -1,33 +1,41 @@
 package com.example.chatterspot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import Client.ChatClient;
 import Shared.Message;
 import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 public class MainActivity extends ActionBarActivity {
 	public final static String EXTRA_MESSAGE = "com.example.chatterspot.MESSAGE";
-	private List<String> message = new ArrayList<String>();
-	private ArrayAdapter<String> adapter;
-	private final static String USERNAME = "Jordan";
+	private List<HashMap<String, String>> messages;
+	private SimpleAdapter adapter;
+	private static String USERNAME;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, message);
+		
+		// Get the username from the intent
+	    Intent intent = getIntent();
+	    USERNAME = intent.getStringExtra(LoginActivity.USERNAME);
+		
+		messages = new ArrayList<HashMap<String, String>>();
+		adapter = new SimpleAdapter(this, messages, R.layout.message_row,
+				new String[] {"user", "message"}, new int[] {R.id.USER, R.id.MESSAGE});
 		ListView messages = (ListView) findViewById(R.id.messages);
 		messages.setAdapter(adapter);
-		
 	}
 
 	@Override
@@ -55,8 +63,11 @@ public class MainActivity extends ActionBarActivity {
 		
 		Message newMessage = new Message(USERNAME, editText.getText().toString(), 0);
 		new ChatClient.SendMessage().execute(newMessage);
-		
-		adapter.add(editText.getText().toString());
+		HashMap<String, String> message = new HashMap<String, String>();
+		message.put("user", USERNAME + ": ");
+		message.put("message", editText.getText().toString());
+		messages.add(message);
+		adapter.notifyDataSetChanged();
 	}
 	
 }
