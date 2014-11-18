@@ -2,6 +2,12 @@ package Server;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import Database.databaseOperations;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -73,10 +79,33 @@ public class ClientHandler implements HttpHandler {
 		}
 		
 		// TODO: Query DB for messages in with chatroom_id = 'chatId'
-		
-		String jsonResponse = "";
+		ResultSet rs = null;
+		try {
+			rs = databaseOperations.readMessage(databaseOperations.getConnection());
+		} catch (URISyntaxException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		}
+		String jsonResponse = "{messages : [";
 		// TODO: Iterate through rows and build up JSON response
-		
+		try {
+			while (rs.next()) {
+				String id = rs.getString("ID");
+				String text = rs.getString("text");
+				String timestamp = rs.getString("timestamp");
+				String message = "{ username : noone, timestamp : " + timestamp + ", message : " + text + " },";
+				jsonResponse += message;
+			}
+			jsonResponse += "]}";
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 			exchange.sendResponseHeaders(200, jsonResponse.getBytes().length);
 			
