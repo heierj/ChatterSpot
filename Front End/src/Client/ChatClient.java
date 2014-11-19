@@ -7,10 +7,9 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.List;
-
 import Shared.Message;
 import android.os.AsyncTask;
-
+import com.example.chatterspot.ChatActivity;
 import com.google.gson.Gson;
 
 
@@ -21,23 +20,43 @@ import com.google.gson.Gson;
  */
 public class ChatClient {
 	private static final String SERVER_URL = "http://173.250.159.247:4444";
-
+	private ChatActivity chat; 
 	
-	public static class SendMessage extends AsyncTask<Message, Void, Boolean> {
-		/**
-		 * Sends a message to the server
-		 * @param message the message to be sent
-		 * @return true on success, false on failure
-		 */
+	public ChatClient(ChatActivity chat) {
+		this.chat = chat;
+	}
+	
+	/**
+	 * Sends a message to the server
+	 * @param message the message to be sent
+	 */
+	public void sendMessage(Message message) {
+		new SendMessage().execute(message);
+	}
+
+	public void loadMessages() {
+		new LoadMessages().execute();
+	}
+	
+	public void updateMessage() {
+		new UpdateMessages().execute();
+	}
+	
+	/**
+	 * This class is used to send a message to the server. It is needed
+	 * since network operations must be done on a separate thread than
+	 * the UI thread
+	 */
+	private class SendMessage extends AsyncTask<Message, Void, Boolean> {
+		
 		@Override
 		protected Boolean doInBackground(Message... messages) {
-			System.out.println("Send message");
 			Message message = messages[0];
 			
 			// Create the URL to send request to
 			URL postMessage;
 			try {
-				postMessage = new URL(SERVER_URL + "/chatroom");
+				postMessage = new URL(SERVER_URL + "/chatroom?id=" + chat.getChatId());
 			} catch (MalformedURLException e1) {
 				System.err.println("Post message URL is invalid");
 				return false;
@@ -52,10 +71,12 @@ public class ChatClient {
 				System.err.println("Could not open HTTP connection to post message");
 				return false;
 			}
+			
 			try {
 				client.setRequestMethod("POST");
 			} catch (ProtocolException e) {
 				System.err.println("Invalid request method set");
+				client.disconnect();
 				return false;
 			}
 			
@@ -72,6 +93,7 @@ public class ChatClient {
 				outToServer.close();
 			} catch (IOException e) {
 				System.err.println("Cound't send message to server" + e);
+				client.disconnect();
 				return false;
 			}
 			
@@ -79,9 +101,12 @@ public class ChatClient {
 				System.out.println("Response: " + client.getResponseCode());
 			} catch (IOException e) {
 				System.err.println("No response received");
+				client.disconnect();
 				return false;
 			}
+			
 			// Success!
+			client.disconnect();
 			return true;
 		}
 	}
@@ -91,22 +116,23 @@ public class ChatClient {
 	 * Loads all the messages for the chat room
 	 * @return a list containing all the messages in the chat room
 	 */
-	public static class LoadMessages extends AsyncTask<Integer, Void, Message> {
+	public class LoadMessages extends AsyncTask<Void, Void, List<Message>> {
 
 		@Override
-		protected Message doInBackground(Integer... params) {
+		protected List<Message> doInBackground(Void... params) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 	}
 	
-	/**
-	 * Loads all the messages added to the chat room since the last
-	 * check
-	 * @return only the new messages
-	 */
-	public static List<Message> updateMessages() {
-		return null;
+	private class UpdateMessages extends AsyncTask<Void, Void, List<Message>> {
+
+		@Override
+		protected List<Message> doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 	}
 	
 }
