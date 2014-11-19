@@ -20,7 +20,7 @@ import com.google.gson.Gson;
  *
  */
 public class ChatClient {
-	private static final String SERVER_URL = "http://140.142.244.90:4444";
+	private static final String SERVER_URL = "http://173.250.159.247:4444";
 
 	
 	public static class SendMessage extends AsyncTask<Message, Void, Boolean> {
@@ -37,7 +37,7 @@ public class ChatClient {
 			// Create the URL to send request to
 			URL postMessage;
 			try {
-				postMessage = new URL(SERVER_URL);
+				postMessage = new URL(SERVER_URL + "/chatroom");
 			} catch (MalformedURLException e1) {
 				System.err.println("Post message URL is invalid");
 				return false;
@@ -76,7 +76,7 @@ public class ChatClient {
 			}
 			
 			try {
-				client.getResponseCode();
+				System.out.println("Response: " + client.getResponseCode());
 			} catch (IOException e) {
 				System.err.println("No response received");
 				return false;
@@ -91,8 +91,13 @@ public class ChatClient {
 	 * Loads all the messages for the chat room
 	 * @return a list containing all the messages in the chat room
 	 */
-	public static List<Message> loadMessages() {
-		return null;
+	public static class LoadMessages extends AsyncTask<Integer, Void, Message> {
+
+		@Override
+		protected Message doInBackground(Integer... params) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 	
 	/**
