@@ -242,5 +242,4 @@ public class ChatClient {
 
 		return client;
 	}
-
 }
