@@ -21,6 +21,11 @@ public class ChatActivity extends ActionBarActivity {
 	private List<HashMap<String, String>> messages;
 	private SimpleAdapter adapter;
 	private static String USERNAME;
+<<<<<<< HEAD
+=======
+	private ChatClient client;
+	private int chatId;
+>>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +36,21 @@ public class ChatActivity extends ActionBarActivity {
 	    Intent intent = getIntent();
 	    USERNAME = intent.getStringExtra(LoginActivity.USERNAME);
 		
+<<<<<<< HEAD
+=======
+	    // Set up the adapter which will let us add messages to the view
+>>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
 		messages = new ArrayList<HashMap<String, String>>();
 		adapter = new SimpleAdapter(this, messages, R.layout.message_row,
 				new String[] {"user", "message"}, new int[] {R.id.USER, R.id.MESSAGE});
 		ListView messages = (ListView) findViewById(R.id.messages);
 		messages.setAdapter(adapter);
+<<<<<<< HEAD
+=======
+		
+		// Create the client for network operations
+		client = new ChatClient(this);
+>>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
 	}
 
 	@Override
@@ -57,6 +72,7 @@ public class ChatActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 	
+<<<<<<< HEAD
 	/** Called when the user clicks the Send button */
 	public void sendMessage(View view) {
 		EditText editText = (EditText) findViewById(R.id.edit_message);
@@ -69,5 +85,46 @@ public class ChatActivity extends ActionBarActivity {
 		messages.add(message);
 		adapter.notifyDataSetChanged();
 	}
+=======
+	/** 
+	 * Called when the user clicks the Send button. Sends the new
+	 * message to the database and displays it to the user.
+	 */
+	public void sendMessage(View view) {
+		EditText editText = (EditText) findViewById(R.id.edit_message);
+		Message newMessage = new Message(USERNAME, editText.getText().toString(), 0);
+		addMessage(newMessage);
+		client.sendMessage(newMessage);
+	}
+	
+	/**
+	 * Adds a list of messages to the currently displayed messages
+	 * @param newMessages the messages to be added
+	 */
+	public void addMessages(List<Message> newMessages) {
+		for(Message message : newMessages) {
+			addMessage(message);
+		}
+	}
+	
+	/**
+	 * Adds a single message to the currently displayed messages
+	 * @param message the message to be displayed
+	 */
+	public void addMessage(Message message) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("user", message.getUsername() + ":  ");
+		map.put("message", message.getMessage());
+		messages.add(map);
+		adapter.notifyDataSetChanged();
+	}
+
+	/**
+	 * @return the chatId for the current chat
+	 */
+	public int getChatId() {
+		return chatId;
+	}
+>>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
 	
 }
