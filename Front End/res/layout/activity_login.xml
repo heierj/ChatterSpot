@@ -1,39 +1,3 @@
-<<<<<<< HEAD
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerInParent="true" >
-    
-	    <TextView
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/app_name"
-	        android:layout_gravity="center"
-	        android:textSize="24sp" />
-	    
-	    <EditText
-	            android:id="@+id/enter_username"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:ems="10"
-	            android:hint="@string/enter_username" />
-	    
-	    <Button
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:onClick="startChatting"
-	            android:layout_gravity="center"
-	            android:text="@string/start_chatting" /> 
-	</LinearLayout>
-
-</RelativeLayout>
-=======
 <LinearLayout
      xmlns:android="http://schemas.android.com/apk/res/android"
      android:layout_gravity="center"
@@ -63,4 +27,3 @@
             android:layout_gravity="center"
             android:text="@string/start_chatting" /> 
 </LinearLayout>
->>>>>>> 0740b22d062ab776c01d00204eae7a296638c976

@@ -7,11 +7,13 @@ import java.util.List;
 import Client.ChatClient;
 import Shared.Message;
 import android.support.v7.app.ActionBarActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -21,11 +23,8 @@ public class ChatActivity extends ActionBarActivity {
 	private List<HashMap<String, String>> messages;
 	private SimpleAdapter adapter;
 	private static String USERNAME;
-<<<<<<< HEAD
-=======
 	private ChatClient client;
 	private int chatId;
->>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,21 +35,15 @@ public class ChatActivity extends ActionBarActivity {
 	    Intent intent = getIntent();
 	    USERNAME = intent.getStringExtra(LoginActivity.USERNAME);
 		
-<<<<<<< HEAD
-=======
 	    // Set up the adapter which will let us add messages to the view
->>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
 		messages = new ArrayList<HashMap<String, String>>();
 		adapter = new SimpleAdapter(this, messages, R.layout.message_row,
 				new String[] {"user", "message"}, new int[] {R.id.USER, R.id.MESSAGE});
 		ListView messages = (ListView) findViewById(R.id.messages);
 		messages.setAdapter(adapter);
-<<<<<<< HEAD
-=======
 		
 		// Create the client for network operations
 		client = new ChatClient(this);
->>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
 	}
 
 	@Override
@@ -72,20 +65,6 @@ public class ChatActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 	
-<<<<<<< HEAD
-	/** Called when the user clicks the Send button */
-	public void sendMessage(View view) {
-		EditText editText = (EditText) findViewById(R.id.edit_message);
-		
-		Message newMessage = new Message(USERNAME, editText.getText().toString(), 0);
-		new ChatClient.SendMessage().execute(newMessage);
-		HashMap<String, String> message = new HashMap<String, String>();
-		message.put("user", USERNAME + ": ");
-		message.put("message", editText.getText().toString());
-		messages.add(message);
-		adapter.notifyDataSetChanged();
-	}
-=======
 	/** 
 	 * Called when the user clicks the Send button. Sends the new
 	 * message to the database and displays it to the user.
@@ -93,6 +72,13 @@ public class ChatActivity extends ActionBarActivity {
 	public void sendMessage(View view) {
 		EditText editText = (EditText) findViewById(R.id.edit_message);
 		Message newMessage = new Message(USERNAME, editText.getText().toString(), 0);
+	
+		// Clear the message and put the keyboard away
+		InputMethodManager imm = (InputMethodManager)getSystemService(
+			      Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+		editText.setText("");
+		
 		addMessage(newMessage);
 		client.sendMessage(newMessage);
 	}
@@ -125,6 +111,5 @@ public class ChatActivity extends ActionBarActivity {
 	public int getChatId() {
 		return chatId;
 	}
->>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
 	
 }

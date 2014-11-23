@@ -1,52 +1,38 @@
 package Client;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
-<<<<<<< HEAD
 
 import Shared.Message;
 import android.os.AsyncTask;
 
-=======
-import Shared.Message;
-import android.os.AsyncTask;
 import com.example.chatterspot.ChatActivity;
->>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
 import com.google.gson.Gson;
-
+import com.google.gson.reflect.TypeToken;
 
 /**
- * Creates a connection with the server which is used to 
- * send messages to a chat room
- *
+ * Creates a connection with the server which is used to send messages to a chat
+ * room
+ * 
  */
 public class ChatClient {
-<<<<<<< HEAD
-	private static final String SERVER_URL = "http://140.142.244.90:4444";
-
-	
-	public static class SendMessage extends AsyncTask<Message, Void, Boolean> {
-		/**
-		 * Sends a message to the server
-		 * @param message the message to be sent
-		 * @return true on success, false on failure
-		 */
-		@Override
-		protected Boolean doInBackground(Message... messages) {
-			System.out.println("Send message");
-=======
 	private static final String SERVER_URL = "http://173.250.159.247:4444";
-	private ChatActivity chat; 
-	
+	private ChatActivity chat;
+
 	public ChatClient(ChatActivity chat) {
 		this.chat = chat;
+		new LoadMessages().execute();
 	}
-	
+
 	/**
 	 * Sends a message to the server
 	 * @param message the message to be sent
@@ -58,66 +44,43 @@ public class ChatClient {
 	public void loadMessages() {
 		new LoadMessages().execute();
 	}
-	
-	public void updateMessage() {
-		new UpdateMessages().execute();
-	}
-	
+
 	/**
-	 * This class is used to send a message to the server. It is needed
-	 * since network operations must be done on a separate thread than
-	 * the UI thread
+	 * This class is used to send a message to the server. It is needed since
+	 * network operations must be done on a separate thread than the UI thread
 	 */
 	private class SendMessage extends AsyncTask<Message, Void, Boolean> {
-		
+
 		@Override
 		protected Boolean doInBackground(Message... messages) {
->>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
 			Message message = messages[0];
-			
+
 			// Create the URL to send request to
-			URL postMessage;
-			try {
-<<<<<<< HEAD
-				postMessage = new URL(SERVER_URL);
-=======
-				postMessage = new URL(SERVER_URL + "/chatroom?id=" + chat.getChatId());
->>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
-			} catch (MalformedURLException e1) {
-				System.err.println("Post message URL is invalid");
+			String url = SERVER_URL + "/chatroom?id=" + chat.getChatId();
+
+			// Set up the HTTP
+			HttpURLConnection client = openConnection(url);
+
+			if (client == null) {
+				System.err.println("Could not open HTTP "
+						+ "connection to post message");
 				return false;
 			}
-			
-			// Set up the HTTP 
-			HttpURLConnection client;
-			try {
-				client = (HttpURLConnection) postMessage.openConnection();
-				client.setDoOutput(true);
-			} catch (IOException e) {
-				System.err.println("Could not open HTTP connection to post message");
-				return false;
-			}
-<<<<<<< HEAD
-=======
-			
->>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
+
 			try {
 				client.setRequestMethod("POST");
 			} catch (ProtocolException e) {
 				System.err.println("Invalid request method set");
-<<<<<<< HEAD
-=======
 				client.disconnect();
->>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
 				return false;
 			}
-			
+
 			// Format the message
 			Gson gson = new Gson();
 			String json = gson.toJson(message);
-			
+
 			// Send the message
-			DataOutputStream outToServer;		
+			DataOutputStream outToServer;
 			try {
 				outToServer = new DataOutputStream(client.getOutputStream());
 				outToServer.write(json.getBytes());
@@ -125,72 +88,159 @@ public class ChatClient {
 				outToServer.close();
 			} catch (IOException e) {
 				System.err.println("Cound't send message to server" + e);
-<<<<<<< HEAD
-=======
 				client.disconnect();
->>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
 				return false;
 			}
-			
+
 			try {
-<<<<<<< HEAD
-				client.getResponseCode();
-			} catch (IOException e) {
-				System.err.println("No response received");
-				return false;
-			}
-			// Success!
-=======
 				System.out.println("Response: " + client.getResponseCode());
 			} catch (IOException e) {
 				System.err.println("No response received");
 				client.disconnect();
 				return false;
 			}
-			
+
 			// Success!
 			client.disconnect();
->>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
 			return true;
 		}
 	}
-	
-	
+
 	/**
 	 * Loads all the messages for the chat room
 	 * @return a list containing all the messages in the chat room
 	 */
-<<<<<<< HEAD
-	public static List<Message> loadMessages() {
-		return null;
+	public class LoadMessages extends AsyncTask<Void, Void, Boolean> {
+		private long lastUpdate = 0;
+		private static final int LOAD_MESSAGE_TIMEOUT = 300000;
+
+		/**
+		 * Loads all of the messages when a chat is newly entered. Then
+		 * continues to update messages as they arrive
+		 */
+		@Override
+		protected Boolean doInBackground(Void... params) {
+
+			while (true) {
+				String url;
+
+				// Set URL based on whether we are loading all messages
+				// or updating them
+				if (lastUpdate == 0) {
+					lastUpdate = System.currentTimeMillis();
+					url = SERVER_URL + "/chatroom?id=" + chat.getChatId();
+				} else {
+					url = SERVER_URL + "/chatroom?id=" + chat.getChatId()
+							+ "lastUpdate=" + lastUpdate;
+				}
+
+				// Open the HTTP connection
+				HttpURLConnection client = openConnection(url);
+				if (client == null) {
+					System.err.println("Could not open " + ""
+							+ "HTTP connection to load messages");
+					return false;
+				}
+
+				try {
+					client.setRequestMethod("GET");
+					client.setReadTimeout(LOAD_MESSAGE_TIMEOUT);
+				} catch (ProtocolException e) {
+					System.err.println("Invalid request method set");
+					client.disconnect();
+					return false;
+				}
+
+				// Read the response from the server
+				BufferedReader in;
+				try {
+					int responseCode = client.getResponseCode();
+					if (responseCode == 200) {
+						in = new BufferedReader(new InputStreamReader(
+								client.getInputStream()));
+					} else {
+						System.err.println("Server returned response code"
+								+ responseCode);
+						client.disconnect();
+						continue;
+					}
+				} catch (IOException e) {
+					System.err.println("Could not read from server");
+					client.disconnect();
+					return false;
+				}
+
+				List<Message> updatedMessages = parseServerResponse(in);
+				chat.addMessages(updatedMessages);
+
+				try {
+					in.close();
+					client.disconnect();
+				} catch (IOException e) {
+					System.err.println("Could not close connection");
+				}
+
+				return true;
+			}
+		}
+
+		/**
+		 * When loading messages this method is used to parse the servers
+		 * response
+		 * @param response the response to be parsed
+		 * @return the list of messages the server returned
+		 */
+		private List<Message> parseServerResponse(BufferedReader response) {
+			String inputLine;
+			StringBuffer buffer = new StringBuffer();
+
+			// Read the messages JSON
+			try {
+				while ((inputLine = response.readLine()) != null) {
+					buffer.append(inputLine);
+				}
+			} catch (IOException e) {
+				System.err.println("Error parsing messages from server");
+				return null;
+			}
+
+			// Parse the json into a list of messages
+			String json = buffer.toString();
+			Type listType = new TypeToken<ArrayList<Message>>() {
+			}.getType();
+			return new Gson().fromJson(json, listType);
+		}
 	}
-	
+
 	/**
-	 * Loads all the messages added to the chat room since the last
-	 * check
-	 * @return only the new messages
+	 * Given a string of the URL to connect to, this function will open the
+	 * connection. Sets connection to be both input and output
+	 * @param connectTo the string of the URL to connect to
+	 * @return the opened connection
 	 */
-	public static List<Message> updateMessages() {
-		return null;
-=======
-	public class LoadMessages extends AsyncTask<Void, Void, List<Message>> {
-
-		@Override
-		protected List<Message> doInBackground(Void... params) {
-			// TODO Auto-generated method stub
+	private HttpURLConnection openConnection(String connectTo) {
+		// Create the URL to send request to
+		URL url;
+		try {
+			url = new URL(connectTo);
+		} catch (MalformedURLException e1) {
+			System.err.println("URL is invalid: " + connectTo);
 			return null;
 		}
-	}
-	
-	private class UpdateMessages extends AsyncTask<Void, Void, List<Message>> {
 
-		@Override
-		protected List<Message> doInBackground(Void... params) {
-			// TODO Auto-generated method stub
+		// Set up the HTTP
+		HttpURLConnection client;
+		try {
+			client = (HttpURLConnection) url.openConnection();
+			client.setDoOutput(true);
+			client.setDoInput(true);
+		} catch (IOException e) {
+			System.err.println("Could not open HTTP connection to: "
+					+ connectTo);
 			return null;
 		}
-		
->>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
+
+		return client;
 	}
-	
+
 }
