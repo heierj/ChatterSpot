@@ -1,14 +1,17 @@
 package Server;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import Database.databaseOperations;
+import Shared.Message;
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -67,6 +70,7 @@ public class ClientHandler implements HttpHandler {
 	 * Handles a GET request to the server from the client
 	 */
 	private void handleGet(HttpExchange exchange) {
+		System.out.println("Get request received");
 		String[] path = exchange.getRequestURI().getPath().split("/");
 		
 		if (path.length == 0) {
@@ -133,6 +137,22 @@ public class ClientHandler implements HttpHandler {
 		}
 		
 		// TODO: Parse requestBody JSON
+		BufferedReader reqBody = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
+		String inputLine;
+		StringBuffer buffer = new StringBuffer();
+
+		// Read the messages JSON
+		try {
+			while ((inputLine = reqBody.readLine()) != null) {
+				buffer.append(inputLine);
+			}
+		} catch (IOException e) {
+			System.err.println("Error parsing message from client");
+		}
+		
+		String json = buffer.toString();
+		Message message = new Gson().fromJson(json, Message.class);
+		
 		// TODO: Update DB to hold the message attached in the POST
 		try {
 			databaseOperations.addMessage(databaseOperations.getConnection(), "hi");

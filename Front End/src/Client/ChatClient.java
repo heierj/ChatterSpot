@@ -25,7 +25,7 @@ import com.google.gson.reflect.TypeToken;
  * 
  */
 public class ChatClient {
-	private static final String SERVER_URL = "http://173.250.159.247:4444";
+	private static final String SERVER_URL = "http://108.179.173.200:4444";
 	private ChatActivity chat;
 
 	public ChatClient(ChatActivity chat) {
@@ -59,7 +59,7 @@ public class ChatClient {
 			String url = SERVER_URL + "/chatroom?id=" + chat.getChatId();
 
 			// Set up the HTTP
-			HttpURLConnection client = openConnection(url);
+			HttpURLConnection client = openConnection(url, true, false);
 
 			if (client == null) {
 				System.err.println("Could not open HTTP "
@@ -120,8 +120,8 @@ public class ChatClient {
 		 */
 		@Override
 		protected Boolean doInBackground(Void... params) {
-
-			while (true) {
+			System.out.println("loading messages");
+			//while (true) {
 				String url;
 
 				// Set URL based on whether we are loading all messages
@@ -135,7 +135,7 @@ public class ChatClient {
 				}
 
 				// Open the HTTP connection
-				HttpURLConnection client = openConnection(url);
+				HttpURLConnection client = openConnection(url, false, true);
 				if (client == null) {
 					System.err.println("Could not open " + ""
 							+ "HTTP connection to load messages");
@@ -162,7 +162,7 @@ public class ChatClient {
 						System.err.println("Server returned response code"
 								+ responseCode);
 						client.disconnect();
-						continue;
+						return false;//continue;
 					}
 				} catch (IOException e) {
 					System.err.println("Could not read from server");
@@ -171,14 +171,14 @@ public class ChatClient {
 				}
 
 				List<Message> updatedMessages = parseServerResponse(in);
-				chat.addMessages(updatedMessages);
+				/*chat.addMessages(updatedMessages);
 
 				try {
 					in.close();
 					client.disconnect();
 				} catch (IOException e) {
 					System.err.println("Could not close connection");
-				}
+				}*/
 
 				return true;
 			}
@@ -206,10 +206,11 @@ public class ChatClient {
 
 			// Parse the json into a list of messages
 			String json = buffer.toString();
+			System.out.println("Server response: " + json);
 			Type listType = new TypeToken<ArrayList<Message>>() {
 			}.getType();
 			return new Gson().fromJson(json, listType);
-		}
+		//}
 	}
 
 	/**
@@ -218,7 +219,7 @@ public class ChatClient {
 	 * @param connectTo the string of the URL to connect to
 	 * @return the opened connection
 	 */
-	private HttpURLConnection openConnection(String connectTo) {
+	private HttpURLConnection openConnection(String connectTo, boolean doOutput, boolean doInput) {
 		// Create the URL to send request to
 		URL url;
 		try {
@@ -232,8 +233,8 @@ public class ChatClient {
 		HttpURLConnection client;
 		try {
 			client = (HttpURLConnection) url.openConnection();
-			client.setDoOutput(true);
-			client.setDoInput(true);
+			client.setDoOutput(doOutput);
+			client.setDoInput(doInput);
 		} catch (IOException e) {
 			System.err.println("Could not open HTTP connection to: "
 					+ connectTo);

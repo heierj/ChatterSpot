@@ -23,19 +23,23 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".ChatActivity"
-            android:label="@string/messages" >
+            android:label="@string/title_activity_default" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login" >
+            android:label="@string/title_activity_default" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".FindChatActivity"
+            android:label="@string/title_activity_default" >
         </activity>
     </application>
 

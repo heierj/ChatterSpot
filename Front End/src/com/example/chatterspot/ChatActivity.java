@@ -8,7 +8,6 @@ import Client.ChatClient;
 import Shared.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,10 +18,9 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 public class ChatActivity extends ActionBarActivity {
-	public final static String EXTRA_MESSAGE = "com.example.chatterspot.MESSAGE";
 	private List<HashMap<String, String>> messages;
 	private SimpleAdapter adapter;
-	private static String USERNAME;
+	private User user;
 	private ChatClient client;
 	private int chatId;
 	
@@ -31,9 +29,7 @@ public class ChatActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_chat);
 		
-		// Get the username from the intent
-	    Intent intent = getIntent();
-	    USERNAME = intent.getStringExtra(LoginActivity.USERNAME);
+		user = User.getInstance();
 		
 	    // Set up the adapter which will let us add messages to the view
 		messages = new ArrayList<HashMap<String, String>>();
@@ -71,7 +67,7 @@ public class ChatActivity extends ActionBarActivity {
 	 */
 	public void sendMessage(View view) {
 		EditText editText = (EditText) findViewById(R.id.edit_message);
-		Message newMessage = new Message(USERNAME, editText.getText().toString(), 0);
+		Message newMessage = new Message(user.getUsername(), editText.getText().toString(), 0);
 	
 		// Clear the message and put the keyboard away
 		InputMethodManager imm = (InputMethodManager)getSystemService(
