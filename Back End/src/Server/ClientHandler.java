@@ -155,12 +155,6 @@ public class ClientHandler implements HttpHandler {
 		
 		// TODO: Update DB to hold the message attached in the POST
 		try {
-<<<<<<< HEAD
-			databaseOperations.addMessage(databaseOperations.getConnection(), "");
-		} catch (SQLException | URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-=======
 			databaseOperations.addMessage(databaseOperations.getConnection(), "hi");
 			System.out.println("Message sent to database");
 			exchange.sendResponseHeaders(200, -1);
@@ -170,7 +164,6 @@ public class ClientHandler implements HttpHandler {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
->>>>>>> 0740b22d062ab776c01d00204eae7a296638c976
 		}
 	}
 }
