@@ -7,11 +7,13 @@ import java.util.List;
 import Client.ChatClient;
 import Shared.Message;
 import android.support.v7.app.ActionBarActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -70,6 +72,13 @@ public class ChatActivity extends ActionBarActivity {
 	public void sendMessage(View view) {
 		EditText editText = (EditText) findViewById(R.id.edit_message);
 		Message newMessage = new Message(USERNAME, editText.getText().toString(), 0);
+	
+		// Clear the message and put the keyboard away
+		InputMethodManager imm = (InputMethodManager)getSystemService(
+			      Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+		editText.setText("");
+		
 		addMessage(newMessage);
 		client.sendMessage(newMessage);
 	}
