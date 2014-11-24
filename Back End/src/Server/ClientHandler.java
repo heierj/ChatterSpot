@@ -7,11 +7,13 @@ import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import Database.databaseOperations;
 import Shared.Message;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -83,10 +85,9 @@ public class ClientHandler implements HttpHandler {
 			chatId = Integer.parseInt(path[1]);
 		}
 		
-		// TODO: Query DB for messages in with chatroom_id = 'chatId'
-		ResultSet rs = null;
+		ArrayList<Message> list;
 		try {
-			rs = databaseOperations.readMessage(databaseOperations.getConnection());
+			list = databaseOperations.readMessage(databaseOperations.getConnection());
 		} catch (URISyntaxException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -96,26 +97,16 @@ public class ClientHandler implements HttpHandler {
 			e1.printStackTrace();
 			return;
 		}
-		String jsonResponse = "{messages : [";
-		// TODO: Iterate through rows and build up JSON response
+		Gson gson = new GsonBuilder()
+	            .create();
+
+	    String json = gson.toJson(list);
 		try {
-			while (rs.next()) {
-				String id = rs.getString("ID");
-				String text = rs.getString("text");
-				String timestamp = rs.getString("timestamp");
-				String message = "{ username : noone, timestamp : " + timestamp + ", message : " + text + " },";
-				jsonResponse += message;
-			}
-			jsonResponse += "]}";
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			exchange.sendResponseHeaders(200, jsonResponse.getBytes().length);
+			exchange.sendResponseHeaders(200, json.getBytes().length);
 			
 			OutputStream os = exchange.getResponseBody();
-			os.write(jsonResponse.getBytes().length);
+			os.write(json.getBytes());
+			System.out.println(json);
 			os.close();
 		} catch (IOException e) {
 			System.err.println("Unable to send response to client: " + e.getMessage());
@@ -136,7 +127,6 @@ public class ClientHandler implements HttpHandler {
 			return;
 		}
 		
-		// TODO: Parse requestBody JSON
 		BufferedReader reqBody = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
 		String inputLine;
 		StringBuffer buffer = new StringBuffer();
@@ -155,7 +145,7 @@ public class ClientHandler implements HttpHandler {
 		
 		// TODO: Update DB to hold the message attached in the POST
 		try {
-			databaseOperations.addMessage(databaseOperations.getConnection(), "hi");
+			databaseOperations.addMessage(databaseOperations.getConnection(), message.getMessage());
 			System.out.println("Message sent to database");
 			exchange.sendResponseHeaders(200, -1);
 

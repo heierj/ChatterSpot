@@ -25,7 +25,7 @@ import com.google.gson.reflect.TypeToken;
  * 
  */
 public class ChatClient {
-	private static final String SERVER_URL = "http://108.179.173.200:4444";
+	private static final String SERVER_URL = "http://108.179.185.102:4444";
 	private ChatActivity chat;
 
 	public ChatClient(ChatActivity chat) {

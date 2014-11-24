@@ -1,6 +1,7 @@
 package Shared;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  * Represents a chat room message. Contains all needed 
@@ -9,7 +10,7 @@ import java.sql.Date;
 public class Message {
 	private String username;
 	private String message;
-	private Date timestamp;
+	private Timestamp timestamp;
 	private int chatNumber;
 	
 	/**
@@ -20,17 +21,11 @@ public class Message {
 	 * @param message content of message
 	 * @param chatNumber the chat room which the message belongs in
 	 */
-	public Message(String username, String message, int chatNumber) {
-		this.username = username;
-		this.message = message;
-		this.timestamp = new Date(System.currentTimeMillis());
-		this.chatNumber = chatNumber;
-	}
 	
-	public Message(String username, String message, Date time, int chatNumber) {
+	public Message(String username, String message, Timestamp timestamp2, int chatNumber) {
 		this.username = username;
 		this.message = message;
-		this.timestamp = time;
+		this.timestamp = timestamp2;
 		this.chatNumber = chatNumber;
 	}
 	
@@ -42,7 +37,7 @@ public class Message {
 		return message;
 	}
 	
-	public Date getTimestamp() {
+	public Timestamp getTimestamp() {
 		return timestamp;
 	}
 	

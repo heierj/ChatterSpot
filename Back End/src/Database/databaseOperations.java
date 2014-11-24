@@ -7,6 +7,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+
+import Shared.Message;
 
 public class databaseOperations {
 	public static Connection getConnection() throws URISyntaxException, SQLException {
@@ -42,15 +46,22 @@ public class databaseOperations {
 		}
 	}
 	
-	public static ResultSet readMessage(Connection dbConnection) throws SQLException {
+	public static ArrayList<Message> readMessage(Connection dbConnection) throws SQLException {
 		String selectTableSQL = "SELECT id, text, timestamp from messages";
 		Statement statement = null;
 		try {
 				statement = dbConnection.createStatement();
 
 				ResultSet rs = statement.executeQuery(selectTableSQL);
-				 
-				return rs;
+				ArrayList<Message> list = new ArrayList<Message>();
+				while (rs.next()) {
+					String id = rs.getString("ID");
+					String text = rs.getString("text");
+					String timestamp = rs.getString("timestamp");
+					Message m = new Message("bob", text, new Timestamp(0), 0);
+					list.add(m);
+				}
+				return list;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
