@@ -7,7 +7,10 @@ import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
 
+import Database.DatabaseInteraction;
 import Database.databaseOperations;
 import Shared.Message;
 
@@ -31,7 +34,7 @@ public class ClientHandler implements HttpHandler {
 	 * 							be sent with the below JSON format.
 	 * 
 	 * 		{
-  	 *		messages : [{ username : "<username>"
+  	 *		"messages" : [{ username : "<username>"
   	 *					  timestamp : "<time_stamp>"
   	 *					  message : "<message_text>" },
   	 *					...
@@ -44,9 +47,9 @@ public class ClientHandler implements HttpHandler {
 	 * 			 	  below format
 	 * 
 	 * 		{
-	 * 		username : "<username>"
-	 * 		chatId : <number_id>
-	 * 		message : "<message_text>"
+	 * 		"username" : "<username>"
+	 * 		"chatId" : <number_id>
+	 * 		"message" : "<message_text>"
 	 * 		}
 	 */
 	
@@ -78,51 +81,52 @@ public class ClientHandler implements HttpHandler {
 			return;
 		}
 		
-		int chatId;
+		int chatId = 1;
 		if (path[0].equalsIgnoreCase("chatroom")) {
 			chatId = Integer.parseInt(path[1]);
 		}
 		
-		// TODO: Query DB for messages in with chatroom_id = 'chatId'
-		ResultSet rs = null;
+		DatabaseInteraction dbi = new DatabaseInteraction();
+		List<Message> messages;
 		try {
-			rs = databaseOperations.readMessage(databaseOperations.getConnection());
-		} catch (URISyntaxException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return;
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return;
+  		dbi.open();
+  		messages = dbi.getMessages(chatId);
+  		dbi.close();
+		} catch (Exception e) {
+		  // Handle
+		  System.err.println("Unable to open database connection: " + e.getMessage());
+		  return;
 		}
-		String jsonResponse = "{messages : [";
-		// TODO: Iterate through rows and build up JSON response
-		try {
-			while (rs.next()) {
-				String id = rs.getString("ID");
-				String text = rs.getString("text");
-				String timestamp = rs.getString("timestamp");
-				String message = "{ username : noone, timestamp : " + timestamp + ", message : " + text + " },";
-				jsonResponse += message;
-			}
-			jsonResponse += "]}";
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		
+		StringBuffer responseBuffer = new StringBuffer();
+		responseBuffer.append("{ \"messages\" : [");
+		
+		Iterator<Message> itr = messages.iterator();
+		Gson gson = new Gson();
+		
+		// Iterator through all the messages, building up the JSON results
+		while (itr.hasNext()) {
+		  Message message = itr.next();
+		  responseBuffer.append(gson.toJson(message, Message.class));
+		  
+		  if (itr.hasNext()) {
+		    responseBuffer.append(",");
+		  }
 		}
+		responseBuffer.append("] }");
+		
+		String jsonResponse = responseBuffer.toString();
+		
 		try {
 			exchange.sendResponseHeaders(200, jsonResponse.getBytes().length);
 			
 			OutputStream os = exchange.getResponseBody();
-			os.write(jsonResponse.getBytes().length);
+			os.write(jsonResponse.getBytes(), 0, jsonResponse.getBytes().length);
 			os.close();
 		} catch (IOException e) {
 			System.err.println("Unable to send response to client: " + e.getMessage());
 			return;
 		}
-		
-
 	}
 	
 	/**
@@ -136,7 +140,7 @@ public class ClientHandler implements HttpHandler {
 			return;
 		}
 		
-		// TODO: Parse requestBody JSON
+		// Parse requestBody JSON
 		BufferedReader reqBody = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
 		String inputLine;
 		StringBuffer buffer = new StringBuffer();
@@ -155,15 +159,17 @@ public class ClientHandler implements HttpHandler {
 		
 		// TODO: Update DB to hold the message attached in the POST
 		try {
-			databaseOperations.addMessage(databaseOperations.getConnection(), "hi");
+			DatabaseInteraction dbi = new DatabaseInteraction();
+			dbi.open();
+			dbi.addMessage(message);
+			dbi.close();
+			
 			System.out.println("Message sent to database");
 			exchange.sendResponseHeaders(200, -1);
 
-		} catch (SQLException | URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+      System.err.println("Error inserting message into database: " + e.getMessage());
+      return;
 		}
 	}
 }

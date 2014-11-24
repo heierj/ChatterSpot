@@ -14,7 +14,7 @@ public class databaseOperations {
 	    String username = dbUri.getUserInfo().split(":")[0];
 	    String password = dbUri.getUserInfo().split(":")[1];
 	    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory";
-	    try {
+	  try {
 			Class.forName("org.postgresql.Driver");
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block

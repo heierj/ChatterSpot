@@ -9,8 +9,8 @@ import java.sql.Date;
 public class Message {
 	private String username;
 	private String message;
-	private Date timestamp;
-	private int chatNumber;
+	//private Date timestamp;
+	private int chatroomID;
 	
 	/**
 	 * This constructor will set the time stamp of the message to but the 
@@ -18,20 +18,20 @@ public class Message {
 	 * 
 	 * @param username of the message creator
 	 * @param message content of message
-	 * @param chatNumber the chat room which the message belongs in
+	 * @param chatroomID the chat room which the message belongs in
 	 */
-	public Message(String username, String message, int chatNumber) {
+	public Message(String username, String message, int chatroomID) {
 		this.username = username;
 		this.message = message;
-		this.timestamp = new Date(System.currentTimeMillis());
-		this.chatNumber = chatNumber;
+		//this.timestamp = new Date(System.currentTimeMillis());
+		this.chatroomID = chatroomID;
 	}
 	
-	public Message(String username, String message, Date time, int chatNumber) {
+	public Message(String username, String message, Date time, int chatroomID) {
 		this.username = username;
 		this.message = message;
-		this.timestamp = time;
-		this.chatNumber = chatNumber;
+		//this.timestamp = time;
+		this.chatroomID = chatroomID;
 	}
 	
 	public String getUsername() {
@@ -42,11 +42,11 @@ public class Message {
 		return message;
 	}
 	
-	public Date getTimestamp() {
+	/*public Date getTimestamp() {
 		return timestamp;
-	}
+	}*/
 	
 	public int getChatNumber() {
-		return chatNumber;
+		return chatroomID;
 	}
 }
