@@ -47,6 +47,12 @@ public class ClientHandler implements HttpHandler {
 	 * 		"chatId" : <number_id>
 	 * 		"message" : "<message_text>"
 	 * 		}
+	 * 
+	 * "/chatroom/create" - Creates a chatroom
+	 * 
+	 * 		{
+	 * 		""
+	 * 		}
 	 */
 	
 	/**
@@ -94,24 +100,7 @@ public class ClientHandler implements HttpHandler {
 		  return;
 		}
 		
-		StringBuffer responseBuffer = new StringBuffer();
-		responseBuffer.append("{ \"messages\" : [");
-		
-		Iterator<Message> itr = messages.iterator();
-		Gson gson = new Gson();
-		
-		// Iterator through all the messages, building up the JSON results
-		while (itr.hasNext()) {
-		  Message message = itr.next();
-		  responseBuffer.append(gson.toJson(message, Message.class));
-		  
-		  if (itr.hasNext()) {
-		    responseBuffer.append(",");
-		  }
-		}
-		responseBuffer.append("] }");
-		
-		String jsonResponse = responseBuffer.toString();
+		String jsonResponse = new Gson().toJson(messages);
 		
 		try {
 			exchange.sendResponseHeaders(200, jsonResponse.getBytes().length);
