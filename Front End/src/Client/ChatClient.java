@@ -25,7 +25,7 @@ import com.google.gson.reflect.TypeToken;
  * 
  */
 public class ChatClient {
-	private static final String SERVER_URL = "http://108.179.185.102:4444";
+	private static final String SERVER_URL = "http://108.179.185.102:4445";
 	private ChatActivity chat;
 
 	public ChatClient(ChatActivity chat) {
@@ -181,7 +181,7 @@ public class ChatClient {
 				}*/
 
 				return true;
-			}
+			//}
 		}
 
 		/**
@@ -210,7 +210,7 @@ public class ChatClient {
 			Type listType = new TypeToken<ArrayList<Message>>() {
 			}.getType();
 			return new Gson().fromJson(json, listType);
-		//}
+		}
 	}
 
 	/**
