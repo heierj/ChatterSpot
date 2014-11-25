@@ -1,6 +1,5 @@
 package Shared;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 /**
@@ -24,7 +23,6 @@ public class Message {
 	public Message(String username, String message, int chatroomID) {
 		this.username = username;
 		this.message = message;
-		//this.timestamp = new Date(System.currentTimeMillis());
 		this.chatroomID = chatroomID;
 	}
 	

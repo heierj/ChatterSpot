@@ -25,7 +25,7 @@ import com.google.gson.reflect.TypeToken;
  * 
  */
 public class ChatClient {
-	private static final String SERVER_URL = "http://108.179.185.102:4445";
+	private static final String SERVER_URL = "http://128.208.182.52:4445";
 	private ChatActivity chat;
 
 	public ChatClient(ChatActivity chat) {
@@ -110,18 +110,16 @@ public class ChatClient {
 	 * Loads all the messages for the chat room
 	 * @return a list containing all the messages in the chat room
 	 */
-	public class LoadMessages extends AsyncTask<Void, Void, Boolean> {
+	public class LoadMessages extends AsyncTask<Void, Void, List<Message>> {
 		private long lastUpdate = 0;
 		private static final int LOAD_MESSAGE_TIMEOUT = 300000;
 
 		/**
-		 * Loads all of the messages when a chat is newly entered. Then
-		 * continues to update messages as they arrive
+		 * Loads all of the messages when a chat is newly entered. 
 		 */
 		@Override
-		protected Boolean doInBackground(Void... params) {
+		protected List<Message> doInBackground(Void... params) {
 			System.out.println("loading messages");
-			//while (true) {
 				String url;
 
 				// Set URL based on whether we are loading all messages
@@ -139,7 +137,7 @@ public class ChatClient {
 				if (client == null) {
 					System.err.println("Could not open " + ""
 							+ "HTTP connection to load messages");
-					return false;
+					return null;
 				}
 
 				try {
@@ -148,7 +146,7 @@ public class ChatClient {
 				} catch (ProtocolException e) {
 					System.err.println("Invalid request method set");
 					client.disconnect();
-					return false;
+					return null;
 				}
 
 				// Read the response from the server
@@ -162,26 +160,29 @@ public class ChatClient {
 						System.err.println("Server returned response code"
 								+ responseCode);
 						client.disconnect();
-						return false;//continue;
+						return null;
 					}
 				} catch (IOException e) {
 					System.err.println("Could not read from server");
 					client.disconnect();
-					return false;
+					return null;
 				}
 
 				List<Message> updatedMessages = parseServerResponse(in);
-				/*chat.addMessages(updatedMessages);
+				System.out.println("Messages length: " + updatedMessages.size());
 
 				try {
 					in.close();
 					client.disconnect();
 				} catch (IOException e) {
 					System.err.println("Could not close connection");
-				}*/
+				}
 
-				return true;
-			//}
+				return updatedMessages;
+		}
+		
+		protected void onPostExecute(List<Message> messages) {
+			chat.addMessages(messages);
 		}
 
 		/**
