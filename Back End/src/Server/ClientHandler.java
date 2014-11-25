@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import Database.databaseOperations;
+import Database.DatabaseInteraction;
 import Shared.Message;
 
 import com.google.gson.Gson;
@@ -57,21 +57,36 @@ public class ClientHandler implements HttpHandler {
 	 */
 	public void handle(HttpExchange exchange) throws IOException {
 		String requestMethod = exchange.getRequestMethod();
-		
+		DatabaseInteraction db = new DatabaseInteraction();
+		try {
+			db.open();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (requestMethod.equals("GET")) {
-			handleGet(exchange);
+			handleGet(exchange, db);
 		} else if (requestMethod.equals("POST")) {
-			handlePost(exchange);
+			handlePost(exchange, db);
 		} else {
 			System.err.println("Unsupported request method used in HTTP message");
-			return;
+		}
+		try {
+			db.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
 	/**
 	 * Handles a GET request to the server from the client
+	 * @param db 
 	 */
-	private void handleGet(HttpExchange exchange) {
+	private void handleGet(HttpExchange exchange, DatabaseInteraction db) {
 		System.out.println("Get request received");
 		String[] path = exchange.getRequestURI().getPath().split("/");
 		
@@ -87,11 +102,7 @@ public class ClientHandler implements HttpHandler {
 		
 		ArrayList<Message> list;
 		try {
-			list = databaseOperations.readMessage(databaseOperations.getConnection());
-		} catch (URISyntaxException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return;
+			list = db.getMessages(0);
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -106,7 +117,6 @@ public class ClientHandler implements HttpHandler {
 			
 			OutputStream os = exchange.getResponseBody();
 			os.write(json.getBytes());
-			System.out.println(json);
 			os.close();
 		} catch (IOException e) {
 			System.err.println("Unable to send response to client: " + e.getMessage());
@@ -118,8 +128,9 @@ public class ClientHandler implements HttpHandler {
 	
 	/**
 	 * Handles a POST request to the server from the client
+	 * @param db 
 	 */
-	private void handlePost(HttpExchange exchange) {
+	private void handlePost(HttpExchange exchange, DatabaseInteraction db) {
 		String[] path = exchange.getRequestURI().getPath().split("/");
 		
 		if (path.length == 0) {
@@ -142,18 +153,18 @@ public class ClientHandler implements HttpHandler {
 		
 		String json = buffer.toString();
 		Message message = new Gson().fromJson(json, Message.class);
-		
-		// TODO: Update DB to hold the message attached in the POST
-		try {
-			databaseOperations.addMessage(databaseOperations.getConnection(), message.getMessage());
+			try {
+				db.addMessage(message);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			System.out.println("Message sent to database");
-			exchange.sendResponseHeaders(200, -1);
-
-		} catch (SQLException | URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			try {
+				exchange.sendResponseHeaders(200, -1);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 }

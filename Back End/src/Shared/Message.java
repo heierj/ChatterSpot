@@ -11,7 +11,7 @@ public class Message {
 	private String username;
 	private String message;
 	private Timestamp timestamp;
-	private int chatNumber;
+	private int chatroomID;
 	
 	/**
 	 * This constructor will set the time stamp of the message to but the 
@@ -19,14 +19,20 @@ public class Message {
 	 * 
 	 * @param username of the message creator
 	 * @param message content of message
-	 * @param chatNumber the chat room which the message belongs in
+	 * @param chatroomID the chat room which the message belongs in
 	 */
-	
-	public Message(String username, String message, Timestamp timestamp2, int chatNumber) {
+	public Message(String username, String message, int chatroomID) {
 		this.username = username;
 		this.message = message;
-		this.timestamp = timestamp2;
-		this.chatNumber = chatNumber;
+		//this.timestamp = new Date(System.currentTimeMillis());
+		this.chatroomID = chatroomID;
+	}
+	
+	public Message(String username, String message, Timestamp timestamp, int chatroomID) {
+		this.username = username;
+		this.message = message;
+		this.timestamp = timestamp;
+		this.chatroomID = chatroomID;
 	}
 	
 	public String getUsername() {
@@ -42,6 +48,6 @@ public class Message {
 	}
 	
 	public int getChatNumber() {
-		return chatNumber;
+		return chatroomID;
 	}
 }
