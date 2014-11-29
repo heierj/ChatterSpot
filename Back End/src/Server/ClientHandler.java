@@ -43,8 +43,8 @@ public class ClientHandler implements HttpHandler {
 	 * 			 	  below format
 	 * 
 	 * 		{
-	 * 		"username" : "<username>"
-	 * 		"chatId" : <number_id>
+	 * 		"name" : "<username>"
+	 * 		"id" : <number_id>
 	 * 		"message" : "<message_text>"
 	 * 		}
 	 * 

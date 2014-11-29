@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Shared.Message;
+import Shared.Chatroom;
 
 public class DatabaseInteraction {
   private static final String DB_URI = "postgres://wmocemjkyothtq:7ta5V10mOt12ObvORMQExVSicx@ec2-54-83-204-244." + 
@@ -61,7 +62,7 @@ public class DatabaseInteraction {
    * @return A list of messages from the chatroom
    */
   public ArrayList<Message> getMessages(int chatroomID) throws SQLException {
-    ArrayList<Message> messages = new ArrayList<>();
+    ArrayList<Message> messages = new ArrayList<Message>();
     
     String selectTableSQL = "SELECT id, text, timestamp from messages";
     Statement statement = dbConnection.createStatement();
@@ -79,4 +80,33 @@ public class DatabaseInteraction {
     
     return messages;
   }
+  //should take in gps coords
+  public void createChatroom(String name) throws SQLException {
+	    String insertTableSQL = 
+	        "INSERT INTO chatrooms" + 
+	        "(name, timestamp) VALUES" + "( '" + name + "', 'now')";
+	    
+	    Statement statement = dbConnection.createStatement();
+	    statement.executeUpdate(insertTableSQL);
+	    statement.close();
+  }
+  
+  //should eventually take gps coords
+  public ArrayList<Chatroom> getChatrooms() throws SQLException {
+	  ArrayList<Chatroom> chatrooms = new ArrayList<Chatroom>();
+	    
+	    String selectTableSQL = "SELECT id, name, timestamp from chatrooms";
+	    Statement statement = dbConnection.createStatement();
+	    ResultSet rs = statement.executeQuery(selectTableSQL);
+	    
+	    while (rs.next()) {
+	      int id = rs.getInt("id");
+	      String name = rs.getString("name");
+	      String timestamp = rs.getString("timestamp");
+	      Chatroom chatroom = new Chatroom(name, new Timestamp(0), id);
+	      chatrooms.add(chatroom);
+	    }
+		return chatrooms;
+  }
+  
 }
