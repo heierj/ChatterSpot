@@ -146,7 +146,7 @@ public class ClientHandler implements HttpHandler {
 		try {
 			DatabaseInteraction dbi = new DatabaseInteraction();
 			dbi.open();
-			dbi.addMessage(message);
+			dbi.addMessage(message, message.getChatNumber());
 			dbi.close();
 			
 			System.out.println("Message sent to database");

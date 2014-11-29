@@ -44,11 +44,11 @@ public class DatabaseInteraction {
   /**
    * Adds a message to the database
    */
-  public void addMessage(Message message) throws SQLException {
+  public void addMessage(Message message, int chatroom) throws SQLException {
     // For now we ingore the timestamp, username, and chatroomID components of the Message
     String insertTableSQL = 
         "INSERT INTO messages" + 
-        "(text, timestamp) VALUES" + "( '" + message.getMessage() + "', 'now')";
+        "(text, chatroom_id, timestamp) VALUES" + "( '" + message.getMessage() + "', '" + chatroom + "', 'now')";
     
     Statement statement = dbConnection.createStatement();
     statement.executeUpdate(insertTableSQL);
@@ -64,7 +64,7 @@ public class DatabaseInteraction {
   public ArrayList<Message> getMessages(int chatroomID) throws SQLException {
     ArrayList<Message> messages = new ArrayList<Message>();
     
-    String selectTableSQL = "SELECT id, text, timestamp from messages";
+    String selectTableSQL = "SELECT id, text, timestamp from messages WHERE chatroom_id = " + chatroomID + ";";
     Statement statement = dbConnection.createStatement();
     ResultSet rs = statement.executeQuery(selectTableSQL);
     
@@ -74,7 +74,7 @@ public class DatabaseInteraction {
       
       // Until later implemented, all usernames are "nousername" and chatroom ids
       // are all 1.
-      Message message = new Message("nousername", text, new Timestamp(0), 1);
+      Message message = new Message("nousername", text, Timestamp.valueOf(timestamp), chatroomID);
       messages.add(message);
     }
     
@@ -103,7 +103,7 @@ public class DatabaseInteraction {
 	      int id = rs.getInt("id");
 	      String name = rs.getString("name");
 	      String timestamp = rs.getString("timestamp");
-	      Chatroom chatroom = new Chatroom(name, new Timestamp(0), id);
+	      Chatroom chatroom = new Chatroom(name, Timestamp.valueOf(timestamp), id);
 	      chatrooms.add(chatroom);
 	    }
 		return chatrooms;
