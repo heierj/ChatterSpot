@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.ProtocolException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +22,7 @@ import com.google.gson.reflect.TypeToken;
  * room
  * 
  */
-public class ChatClient {
-	private static final String SERVER_URL = "http://10.0.0.5:4445";
+public class ChatClient extends AbstractClient {
 	private ChatActivity chat;
 
 	public ChatClient(ChatActivity chat) {
@@ -214,34 +211,4 @@ public class ChatClient {
 		}
 	}
 
-	/**
-	 * Given a string of the URL to connect to, this function will open the
-	 * connection. Sets connection to be both input and output
-	 * @param connectTo the string of the URL to connect to
-	 * @return the opened connection
-	 */
-	private HttpURLConnection openConnection(String connectTo, boolean doOutput, boolean doInput) {
-		// Create the URL to send request to
-		URL url;
-		try {
-			url = new URL(connectTo);
-		} catch (MalformedURLException e1) {
-			System.err.println("URL is invalid: " + connectTo);
-			return null;
-		}
-
-		// Set up the HTTP
-		HttpURLConnection client;
-		try {
-			client = (HttpURLConnection) url.openConnection();
-			client.setDoOutput(doOutput);
-			client.setDoInput(doInput);
-		} catch (IOException e) {
-			System.err.println("Could not open HTTP connection to: "
-					+ connectTo);
-			return null;
-		}
-
-		return client;
-	}
 }

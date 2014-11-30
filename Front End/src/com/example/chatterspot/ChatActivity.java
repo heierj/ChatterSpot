@@ -3,10 +3,14 @@ package com.example.chatterspot;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.Gson;
+
 import Client.ChatClient;
+import Shared.Chatroom;
 import Shared.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,12 +19,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 
+/**
+ * This activity creates the view for a chat room.
+ */
 public class ChatActivity extends ActionBarActivity {
 	private ArrayList<Message> messages;
 	private MessageAdapter adapter;
 	private User user;
 	private ChatClient client;
-	private int chatId;
+	private Chatroom chatroom;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,14 +35,25 @@ public class ChatActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_chat);
 		
 		user = User.getInstance();
+		chatroom = loadChatroom();
 		
+		// Set up the adapter to display messages
 		messages = new ArrayList<Message>();
 		adapter = new MessageAdapter(this, messages);
-		ListView messages = (ListView) findViewById(R.id.messages);
-		messages.setAdapter(adapter);
+		ListView messageView = (ListView) findViewById(R.id.messages);
+		messageView.setAdapter(adapter);
 		
 		// Create the client for network operations
 		client = new ChatClient(this);
+	}
+	
+	/**
+	 * Loads the chatroom object sent from the findChatActivity
+	 */
+	private Chatroom loadChatroom() {
+		Intent intent = getIntent();
+		String chatJson = intent.getStringExtra(FindChatActivity.CHAT);
+		return new Gson().fromJson(chatJson, Chatroom.class);
 	}
 
 	@Override
@@ -99,7 +117,7 @@ public class ChatActivity extends ActionBarActivity {
 	 * @return the chatId for the current chat
 	 */
 	public int getChatId() {
-		return chatId;
+		return chatroom.getId();
 	}
 	
 }
