@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import Client.ChatClient;
 import Shared.Chatroom;
 import Shared.Message;
-import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,7 +22,7 @@ import android.widget.ListView;
 /**
  * This activity creates the view for a chat room.
  */
-public class ChatActivity extends ActionBarActivity {
+public class ChatActivity extends Activity {
 	private ArrayList<Message> messages;
 	private MessageAdapter adapter;
 	private User user;

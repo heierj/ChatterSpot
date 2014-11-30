@@ -1,24 +1,25 @@
 package com.example.chatterspot;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
 
+import Client.ChatroomClient;
 import Shared.Chatroom;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-public class FindChatActivity extends ActionBarActivity {
+public class FindChatActivity extends Activity {
 	public final static String CHAT = "com.example.chatterspot.CHAT";
 	private ArrayList<Chatroom> chats;
+	private ChatroomClient client;
 	private ChatAdapter adapter;
 	
 	@Override
@@ -28,19 +29,9 @@ public class FindChatActivity extends ActionBarActivity {
 		
 		chats = new ArrayList<Chatroom>();
 		
-		/* TODO: right now adding in chats, need to load from server */
-		Chatroom chat1 = new Chatroom("Global Chat", 
-				new Timestamp(System.currentTimeMillis()), 0);
-		chats.add(chat1);
-		Chatroom chat2 = new Chatroom("Fake Chat 1", 
-				new Timestamp(System.currentTimeMillis()), 1);
-		chats.add(chat2);
-		
-		/*
-		 * Creates chat room client to load available chats
-		 * ChatroomClient = new ChatroomClient();
-		 */
-		
+	    // Creates chat room client to load available chats and create chats
+		client = new ChatroomClient(this);
+		 
 		adapter = new ChatAdapter(this, chats);
 		ListView chatView = (ListView) findViewById(R.id.chats);
 		chatView.setAdapter(adapter);

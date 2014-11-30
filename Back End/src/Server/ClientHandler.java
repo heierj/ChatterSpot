@@ -165,6 +165,7 @@ public class ClientHandler implements HttpHandler {
 	 * directly to calling client.
 	 */
 	private void getChatrooms(HttpExchange exchange) {
+		System.out.println("Getting chatrooms");
 		List<Chatroom> chatrooms;
 		
 		try {

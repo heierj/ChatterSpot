@@ -36,7 +36,7 @@ public class ChatroomClient extends AbstractClient {
 		@Override
 		protected List<Chatroom> doInBackground(Void... params) {
 			System.out.println("loading chats");
-			String url = SERVER_URL + "/chatrooms";
+			String url = SERVER_URL + "/chatroom";
 
 			// Open the HTTP connection
 			HttpURLConnection client = openConnection(url, false, true);
