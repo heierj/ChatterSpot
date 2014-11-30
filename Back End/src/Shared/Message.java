@@ -1,6 +1,5 @@
 package Shared;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 /**

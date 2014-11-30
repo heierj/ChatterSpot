@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.List;
 
 import Database.DatabaseInteraction;
@@ -28,7 +27,7 @@ public class ClientHandler implements HttpHandler {
 	 * GET:
 	 * 	"/chatroom?id=<chatID>" - Gets all the messages associated with a 
 	 * 						      particular chatroom id. A response will 
-	 * 							  be sent with the below JSON format.
+	 * 							  be sent with the JSON format below.
 	 * 
 	 * 		[  {"username" : "<username>",
   	 *			"timestamp" : "<time_stamp>",
@@ -36,7 +35,7 @@ public class ClientHandler implements HttpHandler {
   	 *			...
   	 *		]
   	 *	
-  	 *	"/chatroom"  - Gets info for all the chatrooms (later will should be able to specify a location
+  	 *	"/chatroom"  - Gets info for all the chatrooms (later should be able to specify a location
   	 *				   and radius.)
   	 *
   	 *		[  {"name" : "<chatroom_name>",
@@ -57,7 +56,7 @@ public class ClientHandler implements HttpHandler {
 	 * 		"message" : "<message_text>"
 	 * 		}
 	 * 
-	 * "/chatroom/create" - Creates a chatroom with the specified parameters (location soon)
+	 * 	"/chatroom/create" - Creates a chatroom with the specified parameters (location soon)
 	 * 
 	 * 		{
 	 * 		"name" : "<chatroom_name>"
