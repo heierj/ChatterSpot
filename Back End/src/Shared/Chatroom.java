@@ -13,6 +13,10 @@ public class Chatroom {
 		this.id = id;
 	}
 	
+	public Chatroom(String name) {
+		this.name = name;
+	}
+	
 	public String getName() {
 		return name;
 	}

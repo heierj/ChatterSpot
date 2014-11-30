@@ -29,8 +29,10 @@ public class FindChatActivity extends Activity {
 		
 		chats = new ArrayList<Chatroom>();
 		
-	    // Creates chat room client to load available chats and create chats
+	    // Creates chat room client to load available chats
 		client = new ChatroomClient(this);
+		
+		getActionBar().setTitle("Explore Chats");
 		 
 		adapter = new ChatAdapter(this, chats);
 		ListView chatView = (ListView) findViewById(R.id.chats);
@@ -55,16 +57,12 @@ public class FindChatActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		} else if(id == R.id.action_add_chat){
-			// TODO: Open a create chat view
-			return true;
-		}
+		switch(item.getItemId()) {
+		case R.id.action_add_chat:
+			Intent intent = new Intent(this, CreateChatActivity.class);
+			startActivityForResult(intent, 0);
+	        return true;
+		} 
 		return super.onOptionsItemSelected(item);
 	}
 	
@@ -78,4 +76,12 @@ public class FindChatActivity extends Activity {
 		}
 	}
 	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	  super.onActivityResult(requestCode, resultCode, data);
+	  String chatName = data.getStringExtra(CreateChatActivity.CHAT_NAME);
+	  Chatroom chat = new Chatroom(chatName);
+	  System.out.println("Chat: " + chat.getName());
+	  client.createChat(chat);
+	}
 }

@@ -14,7 +14,7 @@ public abstract class AbstractClient {
 	 * @param connectTo the string of the URL to connect to
 	 * @return the opened connection
 	 */
-	HttpURLConnection openConnection(String connectTo, boolean doOutput, boolean doInput) {
+	static HttpURLConnection openConnection(String connectTo, boolean doOutput, boolean doInput) {
 		// Create the URL to send request to
 		URL url;
 		try {

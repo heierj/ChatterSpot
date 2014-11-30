@@ -1,6 +1,7 @@
 package Client;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
@@ -23,12 +24,17 @@ public class ChatroomClient extends AbstractClient {
 		this.findChat = findChat;
 		new LoadChats().execute();
 	}
-
+	
+	public void createChat(Chatroom chat) {
+		new CreateChat().execute(chat);
+	}
+	
+	
 	/**
 	 * Loads all the chats user can enter
 	 * @return a list containing all the chats available
 	 */
-	public class LoadChats extends AsyncTask<Void, Void, List<Chatroom>> {
+	private class LoadChats extends AsyncTask<Void, Void, List<Chatroom>> {
 
 		/**
 		 * Loads all of the chats once user has signed in
@@ -119,5 +125,61 @@ public class ChatroomClient extends AbstractClient {
 		}
 	}
 	
+	private class CreateChat extends AsyncTask<Chatroom, Void, Boolean> {
 
+		@Override
+		protected Boolean doInBackground(Chatroom... chatrooms) {
+			Chatroom chat = chatrooms[0];
+
+			// Create the URL to send request to
+			String url = SERVER_URL + "/chatroom/create";
+
+			// Set up the HTTP
+			HttpURLConnection client = openConnection(url, true, false);
+
+			if (client == null) {
+				System.err.println("Could not open HTTP "
+						+ "connection to post message");
+				return false;
+			}
+
+			try {
+				client.setRequestMethod("POST");
+			} catch (ProtocolException e) {
+				System.err.println("Invalid request method set");
+				client.disconnect();
+				return false;
+			}
+
+			// Format the message
+			Gson gson = new Gson();
+			String json = gson.toJson(chat);
+
+			// Send the message
+			DataOutputStream outToServer;
+			try {
+				outToServer = new DataOutputStream(client.getOutputStream());
+				outToServer.write(json.getBytes());
+				outToServer.flush();
+				outToServer.close();
+			} catch (IOException e) {
+				System.err.println("Cound't send chatroom to server" + e);
+				client.disconnect();
+				return false;
+			}
+
+			try {
+				System.out.println("Response: " + client.getResponseCode());
+			} catch (IOException e) {
+				System.err.println("No response received");
+				client.disconnect();
+				return false;
+			}
+
+			// Success!
+			client.disconnect();
+			return true;
+		}
+		
+	}
 }

@@ -26,6 +26,10 @@
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".FindChatActivity" />
         </activity>
         <activity
             android:name=".LoginActivity"
@@ -38,6 +42,13 @@
         <activity
             android:name=".FindChatActivity"
             android:label="@string/title_activity_default" >
+        </activity>
+        <activity
+            android:name=".CreateChatActivity"
+            android:label="@string/title_activity_create_chat" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".FindChatActivity" />
         </activity>
     </application>
 
