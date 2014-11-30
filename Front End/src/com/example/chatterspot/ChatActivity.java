@@ -1,8 +1,11 @@
 package com.example.chatterspot;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import Client.ChatClient;
 import Shared.Message;
@@ -34,7 +37,7 @@ public class ChatActivity extends ActionBarActivity {
 	    // Set up the adapter which will let us add messages to the view
 		messages = new ArrayList<HashMap<String, String>>();
 		adapter = new SimpleAdapter(this, messages, R.layout.message_row,
-				new String[] {"user", "message"}, new int[] {R.id.USER, R.id.MESSAGE});
+				new String[] {"user", "message", "time"}, new int[] {R.id.USER, R.id.MESSAGE, R.id.TIME});
 		ListView messages = (ListView) findViewById(R.id.messages);
 		messages.setAdapter(adapter);
 		
@@ -97,9 +100,20 @@ public class ChatActivity extends ActionBarActivity {
 		HashMap<String, String> map = new HashMap<String, String>();
 		map.put("user", message.getUsername() + ":  ");
 		map.put("message", message.getMessage());
+		
+		String timestamp = "";
+		if(message.getTimestamp() != null) {
+			long time = message.getTimestamp().getTime();
+			Date date = new Date(time);
+			SimpleDateFormat df = new SimpleDateFormat("MM-dd-yyyy hh:mm a", Locale.US);
+			timestamp = df.format(date);
+		} 
+		map.put("time", timestamp);
+		
 		messages.add(map);
 		adapter.notifyDataSetChanged();
 	}
+
 
 	/**
 	 * @return the chatId for the current chat
