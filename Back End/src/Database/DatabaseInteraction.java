@@ -44,11 +44,11 @@ public class DatabaseInteraction {
   /**
    * Adds a message to the database
    */
-  public void addMessage(Message message, int chatroom) throws SQLException {
+  public void addMessage(Message message) throws SQLException {
     // For now we ingore the timestamp, username, and chatroomID components of the Message
     String insertTableSQL = 
         "INSERT INTO messages" + 
-        "(text, chatroom_id, timestamp) VALUES" + "( '" + message.getMessage() + "', '" + chatroom + "', 'now')";
+        "(text, chatroom_id, timestamp) VALUES" + "( '" + message.getMessage() + "', '" + message.getChatNumber() + "', 'now')";
     
     Statement statement = dbConnection.createStatement();
     statement.executeUpdate(insertTableSQL);
@@ -61,8 +61,8 @@ public class DatabaseInteraction {
    * @param chatroomID The chat id from which the messages should be retrieved
    * @return A list of messages from the chatroom
    */
-  public ArrayList<Message> getMessages(int chatroomID) throws SQLException {
-    ArrayList<Message> messages = new ArrayList<Message>();
+  public List<Message> getMessages(int chatroomID) throws SQLException {
+    List<Message> messages = new ArrayList<Message>();
     
     String selectTableSQL = "SELECT id, text, timestamp from messages WHERE chatroom_id = " + chatroomID + ";";
     Statement statement = dbConnection.createStatement();
@@ -80,6 +80,7 @@ public class DatabaseInteraction {
     
     return messages;
   }
+  
   //should take in gps coords
   public void createChatroom(String name) throws SQLException {
 	    String insertTableSQL = 
@@ -92,7 +93,7 @@ public class DatabaseInteraction {
   }
   
   //should eventually take gps coords
-  public ArrayList<Chatroom> getChatrooms() throws SQLException {
+  public List<Chatroom> getChatrooms() throws SQLException {
 	  ArrayList<Chatroom> chatrooms = new ArrayList<Chatroom>();
 	    
 	    String selectTableSQL = "SELECT id, name, timestamp from chatrooms";
