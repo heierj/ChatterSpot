@@ -1,11 +1,7 @@
 package com.example.chatterspot;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import Client.ChatClient;
 import Shared.Message;
@@ -18,11 +14,10 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 public class ChatActivity extends ActionBarActivity {
-	private List<HashMap<String, String>> messages;
-	private SimpleAdapter adapter;
+	private ArrayList<Message> messages;
+	private MessageAdapter adapter;
 	private User user;
 	private ChatClient client;
 	private int chatId;
@@ -34,10 +29,8 @@ public class ChatActivity extends ActionBarActivity {
 		
 		user = User.getInstance();
 		
-	    // Set up the adapter which will let us add messages to the view
-		messages = new ArrayList<HashMap<String, String>>();
-		adapter = new SimpleAdapter(this, messages, R.layout.message_row,
-				new String[] {"user", "message", "time"}, new int[] {R.id.USER, R.id.MESSAGE, R.id.TIME});
+		messages = new ArrayList<Message>();
+		adapter = new MessageAdapter(this, messages);
 		ListView messages = (ListView) findViewById(R.id.messages);
 		messages.setAdapter(adapter);
 		
@@ -97,20 +90,7 @@ public class ChatActivity extends ActionBarActivity {
 	 * @param message the message to be displayed
 	 */
 	public void addMessage(Message message) {
-		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("user", message.getUsername() + ":  ");
-		map.put("message", message.getMessage());
-		
-		String timestamp = "";
-		if(message.getTimestamp() != null) {
-			long time = message.getTimestamp().getTime();
-			Date date = new Date(time);
-			SimpleDateFormat df = new SimpleDateFormat("MM-dd-yyyy hh:mm a", Locale.US);
-			timestamp = df.format(date);
-		} 
-		map.put("time", timestamp);
-		
-		messages.add(map);
+		messages.add(message);
 		adapter.notifyDataSetChanged();
 	}
 

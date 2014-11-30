@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
 		android:transcriptMode="alwaysScroll"
         android:layout_above="@id/createMessage"
-        android:layout_width="wrap_content"/>
+        android:layout_width="wrap_content">
+    </ListView>
 
 </RelativeLayout>
