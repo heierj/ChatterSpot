@@ -65,7 +65,8 @@ public class DatabaseInteraction {
   public List<Message> getMessages(int chatroomID) throws SQLException {
     List<Message> messages = new ArrayList<Message>();
     
-    String selectTableSQL = "SELECT id, text, timestamp, user_name from messages WHERE chatroom_id = " + chatroomID + ";";
+    String selectTableSQL = "SELECT id, text, timestamp, user_name from messages WHERE chatroom_id =" + chatroomID
+    		                + " ORDER BY timestamp;";
     Statement statement = dbConnection.createStatement();
     ResultSet rs = statement.executeQuery(selectTableSQL);
     
