@@ -84,7 +84,7 @@ public class ChatActivity extends Activity {
 	 */
 	public void sendMessage(View view) {
 		EditText editText = (EditText) findViewById(R.id.edit_message);
-		Message newMessage = new Message(user.getUsername(), editText.getText().toString(), 0);
+		Message newMessage = new Message(user.getUsername(), editText.getText().toString(), chatroom.getId());
 	
 		// Clear the message and put the keyboard away
 		InputMethodManager imm = (InputMethodManager)getSystemService(

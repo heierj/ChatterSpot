@@ -70,6 +70,7 @@ public class FindChatActivity extends Activity {
 	 * Adds a list of chats to the currently displayed chats
 	 */
 	public void addChatrooms(List<Chatroom> chatrooms) {
+		if(chatrooms == null) return;
 		for(Chatroom chatroom : chatrooms) {
 			chats.add(chatroom);
 			adapter.notifyDataSetChanged();

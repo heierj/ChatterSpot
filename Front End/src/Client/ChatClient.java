@@ -53,7 +53,7 @@ public class ChatClient extends AbstractClient {
 			Message message = messages[0];
 
 			// Create the URL to send request to
-			String url = SERVER_URL + "/chatroom?id=" + chat.getChatId();
+			String url = SERVER_URL + "/chatroom";
 
 			// Set up the HTTP
 			HttpURLConnection client = openConnection(url, true, false);
