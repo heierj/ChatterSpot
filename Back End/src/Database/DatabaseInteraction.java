@@ -77,6 +77,7 @@ public class DatabaseInteraction {
       Message message = new Message("nousername", text, Timestamp.valueOf(timestamp), chatroomID);
       messages.add(message);
     }
+    statement.close();
     
     return messages;
   }
@@ -99,7 +100,6 @@ public class DatabaseInteraction {
 	    String selectTableSQL = "SELECT id, name, timestamp from chatrooms";
 	    Statement statement = dbConnection.createStatement();
 	    ResultSet rs = statement.executeQuery(selectTableSQL);
-	    
 	    while (rs.next()) {
 	      int id = rs.getInt("id");
 	      String name = rs.getString("name");
@@ -107,6 +107,7 @@ public class DatabaseInteraction {
 	      Chatroom chatroom = new Chatroom(name, Timestamp.valueOf(timestamp), id);
 	      chatrooms.add(chatroom);
 	    }
+	    statement.close();
 		return chatrooms;
   }
   
