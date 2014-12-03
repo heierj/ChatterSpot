@@ -92,7 +92,6 @@ public class ChatActivity extends Activity {
 			imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
 		editText.setText("");
 		
-		addMessage(newMessage);
 		client.sendMessage(newMessage);
 	}
 	
@@ -101,20 +100,11 @@ public class ChatActivity extends Activity {
 	 * @param newMessages the messages to be added
 	 */
 	public void addMessages(List<Message> newMessages) {
-		for(Message message : newMessages) {
-			addMessage(message);
-		}
-	}
-	
-	/**
-	 * Adds a single message to the currently displayed messages
-	 * @param message the message to be displayed
-	 */
-	public void addMessage(Message message) {
-		messages.add(message);
+		messages.clear();
+		messages.addAll(newMessages);
 		adapter.notifyDataSetChanged();
+		client.loadMessages(1000);
 	}
-
 
 	/**
 	 * @return the chatId for the current chat

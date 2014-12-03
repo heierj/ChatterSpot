@@ -37,7 +37,7 @@ public class DatabaseInteraction {
    * Closes this connection if it is currently open
    */
   public void close() throws SQLException {
-    if (dbConnection == null) {
+    if (dbConnection != null) {
       dbConnection.close();
     }
   }
@@ -85,6 +85,8 @@ public class DatabaseInteraction {
       Message message = new Message(username, text, Timestamp.valueOf(timestamp), chatroomID);
       messages.add(message);
     }
+    
+    rs.close();
     statement.close();
     
     return messages;
@@ -116,6 +118,7 @@ public class DatabaseInteraction {
 	      Chatroom chatroom = new Chatroom(name, Timestamp.valueOf(timestamp), id);
 	      chatrooms.add(chatroom);
 	    }
+	    rs.close();
 	    statement.close();
 		return chatrooms;
   }

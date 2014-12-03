@@ -80,9 +80,12 @@ public class FindChatActivity extends Activity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	  super.onActivityResult(requestCode, resultCode, data);
-	  String chatName = data.getStringExtra(CreateChatActivity.CHAT_NAME);
-	  Chatroom chat = new Chatroom(chatName);
-	  System.out.println("Chat: " + chat.getName());
-	  client.createChat(chat);
+	  if(resultCode == Activity.RESULT_OK) {
+		  String chatName = data.getStringExtra(CreateChatActivity.CHAT_NAME);
+		  if(chatName == null) return;
+		  Chatroom chat = new Chatroom(chatName);
+		  System.out.println("Chat: " + chat.getName());
+		  client.createChat(chat);
+	  }
 	}
 }
