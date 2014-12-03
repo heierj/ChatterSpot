@@ -38,8 +38,8 @@ public class ChatClient extends AbstractClient {
 		new SendMessage().execute(message);
 	}
 
-	public void loadMessages() {
-		new LoadMessages().execute();
+	public void loadMessages(int sleepTime) {
+		new LoadMessages().execute(sleepTime);
 	}
 
 	/**
@@ -107,75 +107,74 @@ public class ChatClient extends AbstractClient {
 	 * Loads all the messages for the chat room
 	 * @return a list containing all the messages in the chat room
 	 */
-	public class LoadMessages extends AsyncTask<Void, Void, List<Message>> {
-		private long lastUpdate = 0;
+	public class LoadMessages extends AsyncTask<Integer, Void, List<Message>> {
 		private static final int LOAD_MESSAGE_TIMEOUT = 300000;
 
 		/**
 		 * Loads all of the messages when a chat is newly entered. 
 		 */
 		@Override
-		protected List<Message> doInBackground(Void... params) {
+		protected List<Message> doInBackground(Integer... params) {
 			System.out.println("loading messages");
-				String url;
+			if(params.length > 0) {
+				try {
+					Thread.sleep(params[0]);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			String url;
 
-				// Set URL based on whether we are loading all messages
-				// or updating them
-				if (lastUpdate == 0) {
-					lastUpdate = System.currentTimeMillis();
-					url = SERVER_URL + "/chatroom?id=" + chat.getChatId();
+			url = SERVER_URL + "/chatroom?id=" + chat.getChatId();
+
+			// Open the HTTP connection
+			HttpURLConnection client = openConnection(url, false, true);
+			if (client == null) {
+				System.err.println("Could not open " + ""
+						+ "HTTP connection to load messages");
+				return null;
+			}
+
+			try {
+				client.setRequestMethod("GET");
+				client.setReadTimeout(LOAD_MESSAGE_TIMEOUT);
+			} catch (ProtocolException e) {
+				System.err.println("Invalid request method set");
+				client.disconnect();
+				return null;
+			}
+
+			// Read the response from the server
+			BufferedReader in;
+			try {
+				int responseCode = client.getResponseCode();
+				if (responseCode == 200) {
+					in = new BufferedReader(new InputStreamReader(
+							client.getInputStream()));
 				} else {
-					url = SERVER_URL + "/chatroom?id=" + chat.getChatId()
-							+ "lastUpdate=" + lastUpdate;
-				}
-
-				// Open the HTTP connection
-				HttpURLConnection client = openConnection(url, false, true);
-				if (client == null) {
-					System.err.println("Could not open " + ""
-							+ "HTTP connection to load messages");
-					return null;
-				}
-
-				try {
-					client.setRequestMethod("GET");
-					client.setReadTimeout(LOAD_MESSAGE_TIMEOUT);
-				} catch (ProtocolException e) {
-					System.err.println("Invalid request method set");
+					System.err.println("Server returned response code"
+							+ responseCode);
 					client.disconnect();
 					return null;
 				}
+			} catch (IOException e) {
+				System.err.println("Could not read from server");
+				client.disconnect();
+				return null;
+			}
 
-				// Read the response from the server
-				BufferedReader in;
-				try {
-					int responseCode = client.getResponseCode();
-					if (responseCode == 200) {
-						in = new BufferedReader(new InputStreamReader(
-								client.getInputStream()));
-					} else {
-						System.err.println("Server returned response code"
-								+ responseCode);
-						client.disconnect();
-						return null;
-					}
-				} catch (IOException e) {
-					System.err.println("Could not read from server");
-					client.disconnect();
-					return null;
-				}
+			List<Message> updatedMessages = parseServerResponse(in);
+			System.out.println("Messages length: " + updatedMessages.size());
 
-				List<Message> updatedMessages = parseServerResponse(in);
-				System.out.println("Messages length: " + updatedMessages.size());
+			try {
+				in.close();
+				client.disconnect();
+			} catch (IOException e) {
+				System.err.println("Could not close connection");
+			}
 
-				try {
-					in.close();
-					client.disconnect();
-				} catch (IOException e) {
-					System.err.println("Could not close connection");
-				}
-
-				return updatedMessages;
+			return updatedMessages;
 		}
 		
 		protected void onPostExecute(List<Message> messages) {
