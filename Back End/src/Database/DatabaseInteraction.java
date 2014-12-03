@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -48,10 +49,12 @@ public class DatabaseInteraction {
     // For now we ingore the timestamp, username, and chatroomID components of the Message
     String insertTableSQL = 
         "INSERT INTO messages" + 
-        "(text, chatroom_id, user_name, timestamp) VALUES" + "( '" + message.getMessage() + "', '" + 
-        		message.getChatNumber() + "', '" + message.getUsername() + "', 'now')";
+        "(text, chatroom_id, user_name, timestamp) VALUES( ?, ?, ?, 'now')";
     
-    Statement statement = dbConnection.createStatement();
+    PreparedStatement statement = dbConnection.prepareStatement(insertTableSQL);
+    statement.setString(1, message.getMessage());
+    statement.setInt(2, message.getChatNumber());
+    statement.setString(3, message.getUsername());
     statement.executeUpdate(insertTableSQL);
     statement.close();
   }
@@ -65,9 +68,11 @@ public class DatabaseInteraction {
   public List<Message> getMessages(int chatroomID) throws SQLException {
     List<Message> messages = new ArrayList<Message>();
     
-    String selectTableSQL = "SELECT id, text, timestamp, user_name from messages WHERE chatroom_id =" + chatroomID
-    		                + " ORDER BY timestamp;";
-    Statement statement = dbConnection.createStatement();
+    String selectTableSQL = "SELECT id, text, timestamp, user_name from messages WHERE chatroom_id = ?" +
+    		                " ORDER BY timestamp;";
+    
+    PreparedStatement statement = dbConnection.prepareStatement(selectTableSQL);
+    statement.setInt(2, chatroomID);;
     ResultSet rs = statement.executeQuery(selectTableSQL);
     
     while (rs.next()) {
@@ -89,9 +94,10 @@ public class DatabaseInteraction {
   public void createChatroom(String name) throws SQLException {
 	    String insertTableSQL = 
 	        "INSERT INTO chatrooms" + 
-	        "(name, timestamp) VALUES" + "( '" + name + "', 'now')";
+	        "(name, timestamp) VALUES" + "( ?, 'now')";
 	    
-	    Statement statement = dbConnection.createStatement();
+	    PreparedStatement statement = dbConnection.prepareStatement(insertTableSQL);
+	    statement.setString(1, name);
 	    statement.executeUpdate(insertTableSQL);
 	    statement.close();
   }
