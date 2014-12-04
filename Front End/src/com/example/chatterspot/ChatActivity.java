@@ -73,6 +73,7 @@ public class ChatActivity extends Activity {
 		switch(item.getItemId()) {
 		case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
+			finish();
 	        return true;
 		} 
 		return super.onOptionsItemSelected(item);
@@ -103,7 +104,9 @@ public class ChatActivity extends Activity {
 		messages.clear();
 		messages.addAll(newMessages);
 		adapter.notifyDataSetChanged();
-		client.loadMessages(2000);
+		if(!isFinishing()) {
+			client.loadMessages(2000);
+		}
 	}
 
 	/**
