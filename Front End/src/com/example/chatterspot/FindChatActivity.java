@@ -144,7 +144,7 @@ public class FindChatActivity extends Activity implements LocationListener {
 		  if(lastLocation == null) {
 			  lastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 		  }
-		  Chatroom chat = new Chatroom(chatName, lastLocation.getLatitude(), lastLocation.getLongitude());
+		  Chatroom chat = new Chatroom(chatName, null, resultCode, lastLocation.getLatitude(), lastLocation.getLongitude());
 		  System.out.println("Chat: " + chat.getName());
 		  client.createChat(chat);
 	  }
