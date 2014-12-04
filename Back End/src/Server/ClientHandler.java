@@ -35,8 +35,7 @@ public class ClientHandler implements HttpHandler {
   	 *			...
   	 *		]
   	 *	
-  	 *	"/chatroom"  - Gets info for all the chatrooms (later should be able to specify a location
-  	 *				   and radius.)
+  	 *	"/chatroom"  - Gets info for all the chatrooms 
   	 *
   	 *		[  {"name" : "<chatroom_name>",
   	 *		    "timestamp" : "<created_timestamp>",
@@ -61,6 +60,10 @@ public class ClientHandler implements HttpHandler {
 	 * 		{
 	 * 		"name" : "<chatroom_name>"
 	 * 		}
+	 * 
+	 * ERROS:
+	 * 	404 - Invalid URL resource access
+	 * 	500 - Server-side error
 	 */
 	
 	/**
@@ -75,6 +78,7 @@ public class ClientHandler implements HttpHandler {
 			handlePost(exchange);
 		} else {
 			System.err.println("Unsupported request method used in HTTP message");
+			sendResponse(exchange, 404, null);
 			return;
 		}
 	}
@@ -88,6 +92,7 @@ public class ClientHandler implements HttpHandler {
 		
 		if (path.length == 0) {
 			System.err.println("Get request with empty URL path");
+			sendResponse(exchange, 404, null);
 			return;
 		}
 		
@@ -105,6 +110,9 @@ public class ClientHandler implements HttpHandler {
 					getMessages(exchange, chatId);
 				}
 			}
+		} else {
+			// Invalid URL access
+			sendResponse(exchange, 404, null);
 		}
 	}
 	
@@ -116,15 +124,18 @@ public class ClientHandler implements HttpHandler {
 		
 		if (path.length == 0) {
 			System.err.println("Post request with empty URL path");
+			sendResponse(exchange, 404, null);
 			return;
 		}
 		
 		if (path[1].equalsIgnoreCase("chatroom")) {
-			if (path.length > 2 && path[2].equalsIgnoreCase("create")) {
+			if (path.length == 3 && path[2].equalsIgnoreCase("create")) {
 				createChatroom(exchange);
 			} else {
 				postMessage(exchange);
 			}
+		} else {
+			sendResponse(exchange, 404, null);
 		}
 	}
 	
@@ -141,23 +152,13 @@ public class ClientHandler implements HttpHandler {
 			messages = dbi.getMessages(chatID);
 			dbi.close();
 		} catch (Exception e) {
-		  // Handle
 		  System.err.println("Unable to open database connection: " + e.getMessage());
+		  sendResponse(exchange, 500, null);
 		  return;
 		}
 		
 		String jsonResponse = new Gson().toJson(messages);
-		
-		try {
-			exchange.sendResponseHeaders(200, jsonResponse.getBytes().length);
-			
-			OutputStream os = exchange.getResponseBody();
-			os.write(jsonResponse.getBytes(), 0, jsonResponse.getBytes().length);
-			os.close();
-		} catch (IOException e) {
-			System.err.println("Unable to send response to client: " + e.getMessage());
-			return;
-		}
+		sendResponse(exchange, 200, jsonResponse);
 	}
 	
 	/**
@@ -176,29 +177,23 @@ public class ClientHandler implements HttpHandler {
 		} catch (Exception e) {
 		  // Handle
 		  System.err.println("Unable to open database connection: " + e.getMessage());
+		  sendResponse(exchange, 500, null);
 		  return;
 		}
 		
 		String jsonResponse = new Gson().toJson(chatrooms);
-		
-		try {
-			exchange.sendResponseHeaders(200, jsonResponse.getBytes().length);
-			
-			OutputStream os = exchange.getResponseBody();
-			os.write(jsonResponse.getBytes(), 0, jsonResponse.getBytes().length);
-			os.close();
-		} catch (IOException e) {
-			System.err.println("Unable to send response to client: " + e.getMessage());
-			return;
-		}
+		sendResponse(exchange, 200, jsonResponse);
 	}
 
 	/**
-	 * Creates a chatroom.
+	 * Creates a chatroom adhering to the parameters specified in the HTTP message body.
 	 */
 	private void createChatroom(HttpExchange exchange) {
 		String json = extractRequestBody(exchange);
-		if (json == null) return;
+		if (json == null) {
+			sendResponse(exchange, 500, null);
+			return;
+		}
 		
 		Chatroom chatroom = new Gson().fromJson(json, Chatroom.class);
 		
@@ -207,13 +202,14 @@ public class ClientHandler implements HttpHandler {
 			dbi.open();
 			dbi.createChatroom(chatroom.getName());
 			dbi.close();
-			
-			System.out.println("Chatroom created");
-			exchange.sendResponseHeaders(200, -1);
 		} catch (Exception e) {
 			System.err.println("Error creating chatroom: " + e.getMessage());
+			sendResponse(exchange, 500, null);
 			return;
 		}
+		
+		System.out.println("Chatroom created");
+		sendResponse(exchange, 200, null);
 	}
 	
 	/**
@@ -221,7 +217,10 @@ public class ClientHandler implements HttpHandler {
 	 */
 	private void postMessage(HttpExchange exchange) {
 		String json = extractRequestBody(exchange);
-		if (json == null) return;
+		if (json == null) {
+			sendResponse(exchange, 500, null);
+			return;
+		}
 		
 		Message message = new Gson().fromJson(json, Message.class);
 		
@@ -230,13 +229,14 @@ public class ClientHandler implements HttpHandler {
 			dbi.open();
 			dbi.addMessage(message);
 			dbi.close();
-			
-			System.out.println("Message sent to database");
-			exchange.sendResponseHeaders(200, -1);
 		} catch (Exception e) {
 			System.err.println("Error inserting message into database: " + e.getMessage());
+			sendResponse(exchange, 500, null);
 			return;
 		}
+		
+		System.out.println("Message sent to database");
+		sendResponse(exchange, 200, null);
 	}
 	
 	/** 
@@ -262,5 +262,31 @@ public class ClientHandler implements HttpHandler {
 		}
 		
 		return buffer.toString();
+	}
+	
+	/**
+	 * Attempts to send a response.
+	 * 
+	 * @param exchange The exchange representing this HTTP connection.
+	 * @param responseCode The desired response code to be sent.
+	 * @param responseBody The response body. If no response is desired this should be null.
+	 */
+	private static void sendResponse(HttpExchange exchange, int responseCode, String responseBody) {
+		try {
+			// If response null we can just send the response code and call it a day.
+			if (responseBody == null) {
+				exchange.sendResponseHeaders(responseCode, -1);
+				return;
+			}
+			
+			// There must be a response to send so we do a bit more work.
+			exchange.sendResponseHeaders(responseCode, responseBody.getBytes().length);
+	
+			OutputStream os = exchange.getResponseBody();
+			os.write(responseBody.getBytes(), 0, responseBody.getBytes().length);
+			os.close();
+		} catch (IOException e) {
+			System.err.println("Unable to send response: " + e.getMessage());
+		}
 	}
 }
