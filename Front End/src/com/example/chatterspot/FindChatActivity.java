@@ -1,12 +1,15 @@
 package com.example.chatterspot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gson.Gson;
 
 import Client.ChatroomClient;
 import Shared.Chatroom;
+import Utils.ChatroomComparator;
+import Utils.ChatroomUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -23,7 +26,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-public class FindChatActivity extends Activity implements LocationListener {
+public class FindChatActivity extends Activity implements LocationListener, AdapterView.OnItemClickListener {
+	private static final int CHATROOM_RADIUS = 50;
 	public final static String CHAT = "com.example.chatterspot.CHAT";
 	private ArrayList<Chatroom> chats;
 	private ChatroomClient client;
@@ -41,31 +45,20 @@ public class FindChatActivity extends Activity implements LocationListener {
 	    // Creates chat room client to load available chats
 		client = new ChatroomClient(this);
 		
+		// Prepare location services
 		setupLocationManager();
 		lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		if (lastLocation != null) {
-			System.out.println("Found location");
-		} else {
+		if (lastLocation == null) {
 			lastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-			if(lastLocation == null) {
-				System.out.println("Can't get last location");
-			}
 		}
+		
 		getActionBar().setTitle("Explore Chats");
 		 
+		// Create the adapter for viewing chats and attach it to the view
 		adapter = new ChatAdapter(this, chats);
-		adapter.setLocation(lastLocation);
 		ListView chatView = (ListView) findViewById(R.id.chats);
 		chatView.setAdapter(adapter);
-		chatView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			  @Override
-			  public void onItemClick(AdapterView<?> av, View view, int position, long arg3) {
-			    Chatroom clickedChat = chats.get(position);
-			    Intent intent = new Intent(FindChatActivity.this, ChatActivity.class);
-			    intent.putExtra(CHAT, new Gson().toJson(clickedChat));
-			    startActivity(intent);
-			  }
-		});
+		chatView.setOnItemClickListener(this);
 	}
 
 	private void setupLocationManager() {
@@ -98,6 +91,8 @@ public class FindChatActivity extends Activity implements LocationListener {
 		if(chatrooms == null) return;
 		for(Chatroom chatroom : chatrooms) {
 			chats.add(chatroom);
+			ChatroomUtils.setDistanceInFeet(chats, lastLocation);
+			Collections.sort(chats, new ChatroomComparator());
 			adapter.notifyDataSetChanged();
 		}
 	}
@@ -153,7 +148,6 @@ public class FindChatActivity extends Activity implements LocationListener {
 	@Override
 	public void onLocationChanged(Location location) {
 		lastLocation = location;
-		adapter.setLocation(location);
 	}
 
 	@Override
@@ -166,5 +160,27 @@ public class FindChatActivity extends Activity implements LocationListener {
 
 	@Override
 	public void onProviderDisabled(String provider) {
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+	    Chatroom clickedChat = chats.get(position);
+	    if(clickedChat.getCurDist() < CHATROOM_RADIUS) {
+		    Intent intent = new Intent(FindChatActivity.this, ChatActivity.class);
+		    intent.putExtra(CHAT, new Gson().toJson(clickedChat));
+		    startActivity(intent);
+	    } else {
+	    	// Don't let them enter
+	    	AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+	        dialog.setMessage(this.getResources().getString(R.string.not_in_chat_range));
+	        dialog.setPositiveButton(this.getResources().getString(R.string.ok), 
+	        		new DialogInterface.OnClickListener() {
+			            @Override
+			            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+			            }
+	        		});
+	        dialog.show();
+	    }
 	}
 }

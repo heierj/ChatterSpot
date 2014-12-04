@@ -9,18 +9,23 @@ public class Chatroom {
 	private double lon;
 	private double lat;
 	
+	/** Not part of data model, used on app side */
+	private float curDistance;
+	
 	public Chatroom(String name, Timestamp timestamp, int id, double lat, double lon) {
 		this.name = name;
 		this.timestamp = timestamp;
 		this.id = id;
 		this.lon = lon;
 		this.lat = lat;
+		curDistance = 0;
 	}
 	
 	public Chatroom(String name, double lat, double lon) {
 		this.name = name;
 		this.lon = lon;
 		this.lat = lat;
+		curDistance = 0;
 	}
 	
 	public String getName() {
@@ -41,5 +46,13 @@ public class Chatroom {
 	
 	public double getLon() {
 		return lon;
+	}
+
+	public void setCurDist(float curDist) {
+		this.curDistance = curDist;
+	}
+	
+	public float getCurDist() {
+		return curDistance;
 	}
 }

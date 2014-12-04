@@ -16,4 +16,7 @@
     <string name="gps_network_not_enabled">We need access to your location to let you join a chat</string>
 	<string name="open_location_settings">Location Services</string>
 	<string name="cancel">Cancel</string>
+	<string name="not_in_chat_range">You are not within range of this chat, please move closer if you wish to join it</string>
+	<string name="ok">OK</string>
+
 </resources>
