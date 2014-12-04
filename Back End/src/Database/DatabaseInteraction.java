@@ -93,13 +93,15 @@ public class DatabaseInteraction {
   }
   
   //should take in gps coords
-  public void createChatroom(String name) throws SQLException {
+  public void createChatroom(Chatroom chatroom) throws SQLException {
 	    String insertTableSQL = 
 	        "INSERT INTO chatrooms" + 
-	        "(name, timestamp) VALUES" + "( ?, 'now')";
+	        "(name, lat, long, timestamp) VALUES" + "( ?, ?, ?, 'now')";
 	    
 	    PreparedStatement statement = dbConnection.prepareStatement(insertTableSQL);
-	    statement.setString(1, name);
+	    statement.setString(1, chatroom.getName());
+	    statement.setDouble(2, chatroom.getLat());
+	    statement.setDouble(3, chatroom.getLon());
 	    statement.executeUpdate(insertTableSQL);
 	    statement.close();
   }
@@ -108,14 +110,16 @@ public class DatabaseInteraction {
   public List<Chatroom> getChatrooms() throws SQLException {
 	  ArrayList<Chatroom> chatrooms = new ArrayList<Chatroom>();
 	    
-	    String selectTableSQL = "SELECT id, name, timestamp from chatrooms";
+	    String selectTableSQL = "SELECT id, name, timestamp, lat, lon from chatrooms";
 	    Statement statement = dbConnection.createStatement();
 	    ResultSet rs = statement.executeQuery(selectTableSQL);
 	    while (rs.next()) {
 	      int id = rs.getInt("id");
 	      String name = rs.getString("name");
 	      String timestamp = rs.getString("timestamp");
-	      Chatroom chatroom = new Chatroom(name, Timestamp.valueOf(timestamp), id);
+	      double lat = rs.getDouble("lat");
+	      double lon = rs.getDouble("lon");
+	      Chatroom chatroom = new Chatroom(name, Timestamp.valueOf(timestamp), id, lat, lon);
 	      chatrooms.add(chatroom);
 	    }
 	    rs.close();

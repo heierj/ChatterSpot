@@ -205,7 +205,7 @@ public class ClientHandler implements HttpHandler {
 		try {
 			DatabaseInteraction dbi = new DatabaseInteraction();
 			dbi.open();
-			dbi.createChatroom(chatroom.getName());
+			dbi.createChatroom(chatroom);
 			dbi.close();
 			
 			System.out.println("Chatroom created");
