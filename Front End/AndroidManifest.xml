@@ -7,6 +7,10 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="21" />
+        
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true"/>
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -15,6 +19,9 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATIONE" />
 
     <application
         android:allowBackup="true"
@@ -26,10 +33,6 @@
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".FindChatActivity" />
         </activity>
         <activity
             android:name=".LoginActivity"
@@ -43,6 +46,7 @@
             android:name=".FindChatActivity"
             android:label="@string/title_activity_default" >
         </activity>
+        <uses-library android:name="com.google.android.maps" />
         <activity
             android:name=".CreateChatActivity"
             android:label="@string/title_activity_create_chat" >
@@ -50,6 +54,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".FindChatActivity" />
         </activity>
+        <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".FindChatActivity" />
+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyC_AgdR9p5RPt1doXUt9D6GlVEeiJQFUPM"/>
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>
