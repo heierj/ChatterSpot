@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -48,10 +49,12 @@ public class DatabaseInteraction {
     // For now we ingore the timestamp, username, and chatroomID components of the Message
     String insertTableSQL = 
         "INSERT INTO messages" + 
-        "(text, chatroom_id, user_name, timestamp) VALUES" + "( '" + message.getMessage() + "', '" + 
-        		message.getChatNumber() + "', '" + message.getUsername() + "', 'now')";
+        "(text, chatroom_id, user_name, timestamp) VALUES( ?, ?, ?, 'now')";
     
-    Statement statement = dbConnection.createStatement();
+    PreparedStatement statement = dbConnection.prepareStatement(insertTableSQL);
+    statement.setString(1, message.getMessage());
+    statement.setInt(2, message.getChatNumber());
+    statement.setString(3, message.getUsername());
     statement.executeUpdate(insertTableSQL);
     statement.close();
   }
@@ -65,9 +68,11 @@ public class DatabaseInteraction {
   public List<Message> getMessages(int chatroomID) throws SQLException {
     List<Message> messages = new ArrayList<Message>();
     
-    String selectTableSQL = "SELECT id, text, timestamp, user_name from messages WHERE chatroom_id =" + chatroomID
-    		                + " ORDER BY timestamp;";
-    Statement statement = dbConnection.createStatement();
+    String selectTableSQL = "SELECT id, text, timestamp, user_name from messages WHERE chatroom_id = ?" +
+    		                " ORDER BY timestamp;";
+    
+    PreparedStatement statement = dbConnection.prepareStatement(selectTableSQL);
+    statement.setInt(2, chatroomID);;
     ResultSet rs = statement.executeQuery(selectTableSQL);
     
     while (rs.next()) {
@@ -88,12 +93,15 @@ public class DatabaseInteraction {
   }
   
   //should take in gps coords
-  public void createChatroom(String name) throws SQLException {
+  public void createChatroom(Chatroom chatroom) throws SQLException {
 	    String insertTableSQL = 
 	        "INSERT INTO chatrooms" + 
-	        "(name, timestamp) VALUES" + "( '" + name + "', 'now')";
+	        "(name, lat, long, timestamp) VALUES" + "( ?, ?, ?, 'now')";
 	    
-	    Statement statement = dbConnection.createStatement();
+	    PreparedStatement statement = dbConnection.prepareStatement(insertTableSQL);
+	    statement.setString(1, chatroom.getName());
+	    statement.setDouble(2, chatroom.getLat());
+	    statement.setDouble(3, chatroom.getLon());
 	    statement.executeUpdate(insertTableSQL);
 	    statement.close();
   }
@@ -102,14 +110,16 @@ public class DatabaseInteraction {
   public List<Chatroom> getChatrooms() throws SQLException {
 	  ArrayList<Chatroom> chatrooms = new ArrayList<Chatroom>();
 	    
-	    String selectTableSQL = "SELECT id, name, timestamp from chatrooms";
+	    String selectTableSQL = "SELECT id, name, timestamp, lat, lon from chatrooms";
 	    Statement statement = dbConnection.createStatement();
 	    ResultSet rs = statement.executeQuery(selectTableSQL);
 	    while (rs.next()) {
 	      int id = rs.getInt("id");
 	      String name = rs.getString("name");
 	      String timestamp = rs.getString("timestamp");
-	      Chatroom chatroom = new Chatroom(name, Timestamp.valueOf(timestamp), id);
+	      double lat = rs.getDouble("lat");
+	      double lon = rs.getDouble("lon");
+	      Chatroom chatroom = new Chatroom(name, Timestamp.valueOf(timestamp), id, lat, lon);
 	      chatrooms.add(chatroom);
 	    }
 	    rs.close();
