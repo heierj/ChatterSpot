@@ -103,7 +103,7 @@ public class ChatActivity extends Activity {
 		messages.clear();
 		messages.addAll(newMessages);
 		adapter.notifyDataSetChanged();
-		client.loadMessages(1000);
+		client.loadMessages(2000);
 	}
 
 	/**
@@ -111,6 +111,12 @@ public class ChatActivity extends Activity {
 	 */
 	public int getChatId() {
 		return chatroom.getId();
+	}
+	
+	@Override
+	public void onPause() {
+	    super.onPause();  // Always call the superclass method first
+	    finish();
 	}
 	
 }
