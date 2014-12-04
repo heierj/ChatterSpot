@@ -55,7 +55,7 @@ public class DatabaseInteraction {
     statement.setString(1, message.getMessage());
     statement.setInt(2, message.getChatNumber());
     statement.setString(3, message.getUsername());
-    statement.executeUpdate(insertTableSQL);
+    statement.executeUpdate();
     statement.close();
   }
   
@@ -72,8 +72,8 @@ public class DatabaseInteraction {
     		                " ORDER BY timestamp;";
     
     PreparedStatement statement = dbConnection.prepareStatement(selectTableSQL);
-    statement.setInt(2, chatroomID);;
-    ResultSet rs = statement.executeQuery(selectTableSQL);
+    statement.setInt(1, chatroomID);;
+    ResultSet rs = statement.executeQuery();
     
     while (rs.next()) {
       String text = rs.getString("text");
@@ -102,7 +102,7 @@ public class DatabaseInteraction {
 	    statement.setString(1, chatroom.getName());
 	    statement.setDouble(2, chatroom.getLat());
 	    statement.setDouble(3, chatroom.getLon());
-	    statement.executeUpdate(insertTableSQL);
+	    statement.executeUpdate();
 	    statement.close();
   }
   
@@ -110,7 +110,7 @@ public class DatabaseInteraction {
   public List<Chatroom> getChatrooms() throws SQLException {
 	  ArrayList<Chatroom> chatrooms = new ArrayList<Chatroom>();
 	    
-	    String selectTableSQL = "SELECT id, name, timestamp, lat, lon from chatrooms";
+	    String selectTableSQL = "SELECT id, name, timestamp, lat, long from chatrooms";
 	    Statement statement = dbConnection.createStatement();
 	    ResultSet rs = statement.executeQuery(selectTableSQL);
 	    while (rs.next()) {
@@ -118,7 +118,7 @@ public class DatabaseInteraction {
 	      String name = rs.getString("name");
 	      String timestamp = rs.getString("timestamp");
 	      double lat = rs.getDouble("lat");
-	      double lon = rs.getDouble("lon");
+	      double lon = rs.getDouble("long");
 	      Chatroom chatroom = new Chatroom(name, Timestamp.valueOf(timestamp), id, lat, lon);
 	      chatrooms.add(chatroom);
 	    }

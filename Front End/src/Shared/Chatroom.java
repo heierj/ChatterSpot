@@ -17,8 +17,10 @@ public class Chatroom {
 		this.lat = lat;
 	}
 	
-	public Chatroom(String name) {
+	public Chatroom(String name, double lat, double lon) {
 		this.name = name;
+		this.lon = lon;
+		this.lat = lat;
 	}
 	
 	public String getName() {

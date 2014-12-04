@@ -13,5 +13,7 @@
     <string name="title_activity_create_chat">CreateChatActivity</string>
     <string name="create_chat">Create Chat</string>
     <string name="enter_chat_name">Enter a name for the chatroom</string>
-
+    <string name="gps_network_not_enabled">We need access to your location to let you join a chat</string>
+	<string name="open_location_settings">Location Services</string>
+	<string name="cancel">Cancel</string>
 </resources>

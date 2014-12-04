@@ -73,6 +73,7 @@ public class ChatActivity extends Activity {
 		switch(item.getItemId()) {
 		case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
+			finish();
 	        return true;
 		} 
 		return super.onOptionsItemSelected(item);
@@ -103,7 +104,9 @@ public class ChatActivity extends Activity {
 		messages.clear();
 		messages.addAll(newMessages);
 		adapter.notifyDataSetChanged();
-		client.loadMessages(1000);
+		if(!isFinishing()) {
+			client.loadMessages(2000);
+		}
 	}
 
 	/**
@@ -111,6 +114,12 @@ public class ChatActivity extends Activity {
 	 */
 	public int getChatId() {
 		return chatroom.getId();
+	}
+	
+	@Override
+	public void onPause() {
+	    super.onPause();  // Always call the superclass method first
+	    finish();
 	}
 	
 }
