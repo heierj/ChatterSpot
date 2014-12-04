@@ -42,10 +42,9 @@ public class FindChatActivity extends Activity implements LocationListener {
 		client = new ChatroomClient(this);
 		
 		setupLocationManager();
-		
 		lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		if (lastLocation != null) {
-			System.out.println("fOUND location");
+			System.out.println("Found location");
 		} else {
 			lastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 			if(lastLocation == null) {
@@ -55,6 +54,7 @@ public class FindChatActivity extends Activity implements LocationListener {
 		getActionBar().setTitle("Explore Chats");
 		 
 		adapter = new ChatAdapter(this, chats);
+		adapter.setLocation(lastLocation);
 		ListView chatView = (ListView) findViewById(R.id.chats);
 		chatView.setAdapter(adapter);
 		chatView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -69,33 +69,8 @@ public class FindChatActivity extends Activity implements LocationListener {
 	}
 
 	private void setupLocationManager() {
-		boolean gps_enabled = false;
 	    locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-	    try{
-	    	gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-	    } catch(Exception ex){}
-
-	   if(!gps_enabled){
-	        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-	        dialog.setMessage(this.getResources().getString(R.string.gps_network_not_enabled));
-	        dialog.setPositiveButton(this.getResources().getString(R.string.open_location_settings), 
-	        		new DialogInterface.OnClickListener() {
-			            @Override
-			            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-			                Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS );
-			                startActivity(myIntent);
-			                //get gps
-			            }
-	        		});
-	        dialog.setNegativeButton(this.getString(R.string.cancel), 
-	        		new DialogInterface.OnClickListener() {
-			            @Override
-			            public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
-	        		});
-	        dialog.show();
-	    }
-	   
-	   locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 10, this);
+	    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 10, this);
 	}
 
 	@Override
@@ -128,6 +103,39 @@ public class FindChatActivity extends Activity implements LocationListener {
 	}
 	
 	@Override
+	public void onResume() {
+	    super.onResume();  // Always call the superclass method first
+	    checkLocationService();
+	}
+	
+	private void checkLocationService() {
+		boolean gps_enabled = false;
+		try{
+	    	gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+	    } catch(Exception ex){}
+
+	   if(!gps_enabled){
+	        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+	        dialog.setMessage(this.getResources().getString(R.string.gps_network_not_enabled));
+	        dialog.setPositiveButton(this.getResources().getString(R.string.open_location_settings), 
+	        		new DialogInterface.OnClickListener() {
+			            @Override
+			            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+			                Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS );
+			                startActivity(myIntent);
+			                //get gps
+			            }
+	        		});
+	        dialog.setNegativeButton(this.getString(R.string.cancel), 
+	        		new DialogInterface.OnClickListener() {
+			            @Override
+			            public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
+	        		});
+	        dialog.show();
+	    }
+	}
+	
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	  super.onActivityResult(requestCode, resultCode, data);
 	  if(resultCode == Activity.RESULT_OK) {
@@ -145,23 +153,18 @@ public class FindChatActivity extends Activity implements LocationListener {
 	@Override
 	public void onLocationChanged(Location location) {
 		lastLocation = location;
+		adapter.setLocation(location);
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-		
 	}
 }
