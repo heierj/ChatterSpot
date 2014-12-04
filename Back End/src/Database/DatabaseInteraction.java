@@ -55,7 +55,7 @@ public class DatabaseInteraction {
     statement.setString(1, message.getMessage());
     statement.setInt(2, message.getChatNumber());
     statement.setString(3, message.getUsername());
-    statement.executeQuery(insertTableSQL);
+    statement.executeUpdate();
     statement.close();
   }
   
@@ -72,8 +72,8 @@ public class DatabaseInteraction {
     		                " ORDER BY timestamp;";
     
     PreparedStatement statement = dbConnection.prepareStatement(selectTableSQL);
-    statement.setInt(2, chatroomID);;
-    ResultSet rs = statement.executeQuery(selectTableSQL);
+    statement.setInt(1, chatroomID);;
+    ResultSet rs = statement.executeQuery();
     
     while (rs.next()) {
       String text = rs.getString("text");
@@ -102,7 +102,7 @@ public class DatabaseInteraction {
 	    statement.setString(1, chatroom.getName());
 	    statement.setDouble(2, chatroom.getLat());
 	    statement.setDouble(3, chatroom.getLon());
-	    statement.executeQuery(insertTableSQL);
+	    statement.executeUpdate();
 	    statement.close();
   }
   
