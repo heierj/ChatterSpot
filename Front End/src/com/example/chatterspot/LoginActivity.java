@@ -24,7 +24,7 @@ public class LoginActivity extends Activity {
 
 	public void startChatting(View view) {
 		EditText editText = (EditText) findViewById(R.id.enter_username);
-		Intent i = new Intent(this, MapPane.class);
+		//Intent i = new Intent(this, MapPane.class);
 		Intent intent = new Intent(this, FindChatActivity.class);
 		
 		// Set up the singleton class of user

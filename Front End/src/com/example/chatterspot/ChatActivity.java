@@ -12,7 +12,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -72,8 +71,7 @@ public class ChatActivity extends Activity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		switch(item.getItemId()) {
 		case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(this);
-			finish();
+			onBackPressed();
 	        return true;
 		} 
 		return super.onOptionsItemSelected(item);
@@ -120,6 +118,12 @@ public class ChatActivity extends Activity {
 	public void onPause() {
 	    super.onPause();  // Always call the superclass method first
 	    finish();
+	}
+	
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		finish();
 	}
 	
 }
