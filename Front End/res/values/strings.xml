@@ -18,5 +18,7 @@
 	<string name="cancel">Cancel</string>
 	<string name="not_in_chat_range">You are not within range of this chat, please move closer if you wish to join it</string>
 	<string name="ok">OK</string>
+	<string name="refresh">Refresh</string>
+	<string name="view_as_list">View as list</string>
 
 </resources>

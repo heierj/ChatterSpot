@@ -47,6 +47,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".MapPane"
+            android:label="@string/title_activity_default" >
+        </activity>
+        <activity
             android:name=".FindChatActivity"
             android:label="@string/title_activity_default" >
         </activity>
@@ -61,7 +65,7 @@
         <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".FindChatActivity" />
-        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyC_AgdR9p5RPt1doXUt9D6GlVEeiJQFUPM"/>
+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyC_AgdR9p5RPt1doXUt9D6GlVEeiJQFUPM"/> 
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
     </application>
 
