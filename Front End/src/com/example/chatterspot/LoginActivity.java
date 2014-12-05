@@ -31,7 +31,7 @@ public class LoginActivity extends Activity {
 	    String username = editText.getText().toString();
 	    User user = User.getInstance();
 	    user.setUsername(username);
-	    startActivity(i);
+	    startActivity(intent);
 	    finish();
 	}
 }
