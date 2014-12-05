@@ -36,7 +36,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".MapPane"
             android:label="@string/title_activity_default" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
