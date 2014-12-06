@@ -86,7 +86,7 @@ public class FindChatMapActivity extends FindChatActivity {
 	private Marker drawChatroom(Chatroom room) {
 		BitmapDescriptor m = null;
 		String snippet = "";
-		if (room.getCurDist() <= CHATROOM_RADIUS) { // needs to change available
+		if (locationSet && room.getCurDist() <= CHATROOM_RADIUS) { // needs to change available
 			m = BitmapDescriptorFactory
 					.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
 			snippet = "Click here to join";
