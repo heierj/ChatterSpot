@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 
 import Client.ChatroomClient;
 import Shared.Chatroom;
+import Utils.ChatroomUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -39,6 +40,7 @@ public abstract class FindChatActivity extends Activity {
 		locationManager = new FindChatLocationManager(
 				(LocationManager) getSystemService(Context.LOCATION_SERVICE),
 				this);
+		
 	}
 
 	/**
@@ -110,6 +112,9 @@ public abstract class FindChatActivity extends Activity {
 	public void onResume() {
 		super.onResume(); // Always call the superclass method first
 		locationManager.resumeUpdates();
+		if(!locationManager.gpsEnabled()) {
+			showGpsDialog();
+		}
 		setNewLocation(locationManager.getLocation());
 	}
 
@@ -120,6 +125,7 @@ public abstract class FindChatActivity extends Activity {
 		if (location != null) {
 			locationSet = true;
 		}
+		ChatroomUtils.setDistanceInFeet(chats, location);
 	}
 
 	protected void showLocationNotSetCreateDialog() {

@@ -5,7 +5,6 @@ import java.util.List;
 
 import Shared.Chatroom;
 import Utils.ChatroomComparator;
-import Utils.ChatroomUtils;
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
@@ -74,7 +73,6 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 		if(location == null) {
 			return;
 		} 
-		ChatroomUtils.setDistanceInFeet(chats, location);
 		Collections.sort(chats, new ChatroomComparator());
 		adapter.notifyDataSetChanged();
 	}
