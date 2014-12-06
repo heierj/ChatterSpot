@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 
 public abstract class FindChatActivity extends Activity {
 	protected static final int CHATROOM_RADIUS = 50;

@@ -57,7 +57,7 @@
         <uses-library android:name="com.google.android.maps" />
         <activity
             android:name=".CreateChatActivity"
-            android:label="@string/title_activity_create_chat" >
+            android:label="@string/title_activity_default" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".FindChatActivity" />
