@@ -7,12 +7,9 @@ import Shared.Chatroom;
 import Utils.ChatroomComparator;
 import Utils.ChatroomUtils;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,6 +47,10 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 			Intent intent = new Intent(this, CreateChatActivity.class);
 			startActivityForResult(intent, 0);
 	        return true;
+	        
+		case R.id.action_refresh_chat:
+			client.loadChats();
+			return true;
 		} 
 		return super.onOptionsItemSelected(item);
 	}
@@ -58,9 +59,9 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 	 * Adds a list of chats to the currently displayed chats
 	 */
 	@Override
-	public void addChatrooms(List<Chatroom> chatrooms) {
-		super.addChatrooms(chatrooms);
-		setNewLocation(locationManager.getLocation());
+	public void updateChatrooms(List<Chatroom> chatrooms) {
+		super.updateChatrooms(chatrooms);
+		adapter.notifyDataSetChanged();
 	}
 	
 	/**
@@ -71,36 +72,11 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 	public void setNewLocation(Location location) {
 		super.setNewLocation(location);
 		if(location == null) {
-			adapter.notifyDataSetChanged();
 			return;
 		} 
 		ChatroomUtils.setDistanceInFeet(chats, location);
 		Collections.sort(chats, new ChatroomComparator());
 		adapter.notifyDataSetChanged();
-	}
-	
-	/**
-	 * Shows a dialag to the user letting them know they need to have
-	 * GPS services turned on to use the application
-	 */
-	private void showGpsDialog() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage(this.getResources().getString(R.string.gps_network_not_enabled));
-        dialog.setPositiveButton(this.getResources().getString(R.string.open_location_settings), 
-        		new DialogInterface.OnClickListener() {
-		            @Override
-		            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-		                Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS );
-		                startActivity(myIntent);
-		                //get gps
-		            }
-        		});
-        dialog.setNegativeButton(this.getString(R.string.cancel), 
-        		new DialogInterface.OnClickListener() {
-		            @Override
-		            public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
-        		});
-        dialog.show();
 	}
 	
 	/**
@@ -112,16 +88,8 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 	  if(resultCode == Activity.RESULT_OK) {
 		  String chatName = data.getStringExtra(CreateChatActivity.CHAT_NAME);
 		  if(chatName == null) return;
-		  Location lastLocation = locationManager.getLocation();
+		  createChat(chatName);
 		  
-		  if(lastLocation == null) {
-			  showGpsDialog();
-			  return;
-		  }
-		  
-		  Chatroom chat = new Chatroom(chatName, null, resultCode, lastLocation.getLatitude(), lastLocation.getLongitude());
-		  System.out.println("Chat: " + chat.getName());
-		  client.createChat(chat);
 	  }
 	}
 
@@ -132,22 +100,6 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 	    Chatroom clickedChat = chats.get(position);
-	    if (!locationManager.gpsEnabled()) {
-	    	showGpsDialog();
-	    } else if (!locationSet){
-	    	// TODO: create a new dialog here
-	    	showGpsDialog();
-	    } else if(!enterChat(clickedChat)) {
-	    	// don't let them enter
-	    	AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-	        dialog.setMessage(this.getResources().getString(R.string.not_in_chat_range));
-	        dialog.setPositiveButton(this.getResources().getString(R.string.ok), 
-	        		new DialogInterface.OnClickListener() {
-			            @Override
-			            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-			            }
-	        		});
-	        dialog.show();
-	    }
+	    enterChat(clickedChat);
 	}
 }

@@ -144,8 +144,8 @@ public class FindChatMapActivity extends FindChatActivity {
 	}
 
 	@Override
-	public void addChatrooms(List<Chatroom> chatrooms) {
-		super.addChatrooms(chatrooms);
+	public void updateChatrooms(List<Chatroom> chatrooms) {
+		super.updateChatrooms(chatrooms);
 		setChatrooms();
 		
 	}

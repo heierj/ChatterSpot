@@ -54,7 +54,7 @@ public class FindChatLocationManager implements LocationListener {
 	}
 	
 	public void resumeUpdates() {
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 10, this);
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 	}
 	
 	/**
