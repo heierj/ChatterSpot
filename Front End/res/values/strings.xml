@@ -18,5 +18,8 @@
 	<string name="cancel">Cancel</string>
 	<string name="not_in_chat_range">You are not within range of this chat, please move closer if you wish to join it</string>
 	<string name="ok">OK</string>
-
+	<string name="refresh">Refresh</string>
+	<string name="view_as_list">View as list</string>
+	<string name="location_not_set">We are still trying to get your location. Please wait to join a chat.</string>
+	<string name="location_not_set_create">We are still trying to get your location. You cannot create a chat until your location is set</string>
 </resources>

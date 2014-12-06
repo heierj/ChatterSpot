@@ -22,11 +22,15 @@ public class ChatroomClient extends AbstractClient {
 
 	public ChatroomClient(FindChatActivity findChat) {
 		this.findChat = findChat;
-		new LoadChats().execute();
+		loadChats();
 	}
 	
 	public void createChat(Chatroom chat) {
 		new CreateChat().execute(chat);
+	}
+	
+	public void loadChats() {
+		new LoadChats().execute();
 	}
 	
 	
@@ -93,7 +97,7 @@ public class ChatroomClient extends AbstractClient {
 		}
 
 		protected void onPostExecute(List<Chatroom> chats) {
-			findChat.addChatrooms(chats);
+			findChat.updateChatrooms(chats);
 		}
 
 		/**
