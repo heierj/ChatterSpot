@@ -93,7 +93,7 @@ public class FindChatMapActivity extends FindChatActivity {
 		} else {// Unavailable
 			m = BitmapDescriptorFactory
 					.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-			if(!locationManager.gpsEnabled()) {
+			if(!locationManager.providerEnabled()) {
 				snippet = "Please Enable GPS to join chatrooms";
 			}else if(locationSet) {
 				snippet = "Move " + (Math.abs(room.getCurDist() - CHATROOM_RADIUS)) + " closer to join"; 

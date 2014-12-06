@@ -60,6 +60,9 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 	@Override
 	public void updateChatrooms(List<Chatroom> chatrooms) {
 		super.updateChatrooms(chatrooms);
+		if(locationManager.getLocation() != null) {
+			setNewLocation(locationManager.getLocation());
+		}
 		adapter.notifyDataSetChanged();
 	}
 	

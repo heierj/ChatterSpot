@@ -10,9 +10,9 @@ import android.os.Bundle;
  * FindChatActivity
  */
 public class FindChatLocationManager implements LocationListener {
+	private static int TWO_MINUTES = 120000;
 	private LocationManager locationManager;
 	private Location lastLocation;
-	private boolean providerEnabled;
 	private FindChatActivity activity;
 
 	public FindChatLocationManager(LocationManager locationManager, FindChatActivity activity) {
@@ -26,10 +26,49 @@ public class FindChatLocationManager implements LocationListener {
 	 */
 	@Override
 	public void onLocationChanged(Location location) {
-		lastLocation = location;
-		activity.setNewLocation(location);
+		if(isBetterLocation(location)) {
+			lastLocation = location;
+			activity.setNewLocation(location);
+		}
 	}
 	
+	private boolean isBetterLocation(Location location) {
+		if(lastLocation == null) {
+			return true;
+		}
+		
+		// Check whether the new location fix is newer or older
+	    long timeDelta = location.getTime() - lastLocation.getTime();
+	    boolean isSignificantlyNewer = timeDelta > TWO_MINUTES;
+	    boolean isSignificantlyOlder = timeDelta < -TWO_MINUTES;
+	    boolean isNewer = timeDelta > 0;
+
+	    // If it's been more than two minutes since the current location, use the new location
+	    // because the user has likely moved
+	    if (isSignificantlyNewer) {
+	        return true;
+	    // If the new location is more than two minutes older, it must be worse
+	    } else if (isSignificantlyOlder) {
+	        return false;
+	    }
+
+	    // Check whether the new location fix is more or less accurate
+	    int accuracyDelta = (int) (location.getAccuracy() - lastLocation.getAccuracy());
+	    boolean isLessAccurate = accuracyDelta > 0;
+	    boolean isMoreAccurate = accuracyDelta < 0;
+	    boolean isSignificantlyLessAccurate = accuracyDelta > 200;
+
+	    // Determine location quality using a combination of timeliness and accuracy
+	    if (isMoreAccurate) {
+	        return true;
+	    } else if (isNewer && !isLessAccurate) {
+	        return true;
+	    } else if (isNewer && !isSignificantlyLessAccurate) {
+	        return true;
+	    }
+	    return false;
+	}
+
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		// TODO Auto-generated method stub
@@ -38,12 +77,10 @@ public class FindChatLocationManager implements LocationListener {
 
 	@Override
 	public void onProviderEnabled(String provider) {
-		providerEnabled = true;
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		providerEnabled = false;
 	}
 	
 	/**
@@ -55,6 +92,7 @@ public class FindChatLocationManager implements LocationListener {
 	
 	public void resumeUpdates() {
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 	}
 	
 	/**
@@ -62,16 +100,14 @@ public class FindChatLocationManager implements LocationListener {
 	 * return the coarse location
 	 */
 	public Location getLocation() {
-		if(!providerEnabled) {
-			return null;
-		}
 		if(lastLocation == null) {
 			lastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 		}
 		return lastLocation;
 	}
 
-	public boolean gpsEnabled() {
-	    return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+	public boolean providerEnabled() {
+	    return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && 
+	    		locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 	}
 }
