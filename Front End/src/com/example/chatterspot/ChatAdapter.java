@@ -14,9 +14,11 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 public class ChatAdapter extends ArrayAdapter<Chatroom> {
-
+	private FindChatActivity activity;
+	
 	public ChatAdapter(Context context, ArrayList<Chatroom> chats) {
 		super(context, 0, chats);
+		activity = (FindChatActivity) context;
 	}
 
 	@Override
@@ -42,8 +44,10 @@ public class ChatAdapter extends ArrayAdapter<Chatroom> {
 		
 		// Prepare the distance
 		String chatDistance = "";
-		float dist = chat.getCurDist();
-		chatDistance = Math.round(dist) + " ft";
+		if(activity.locationSet) {
+			float dist = chat.getCurDist();
+			chatDistance = Math.round(dist) + " ft";
+		}
 		
 		name.setText(chat.getName());
 		createTime.setText(timestamp);
