@@ -6,7 +6,7 @@ import Shared.Chatroom;
 import android.location.Location;
 
 public class ChatroomUtils {
-	private static float METERS_TO_FEET = 3.28084f;
+	public static float METERS_TO_FEET = 3.28084f;
 
 	public static void setDistanceInFeet(List<Chatroom> chats, Location loc) {
 		for(Chatroom chat : chats) {

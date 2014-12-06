@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -15,13 +16,14 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import Shared.Chatroom;
-import android.app.Activity;
+import Utils.ChatroomUtils;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MapPane extends Activity {
+public class FindChatMapActivity extends FindChatActivity {
 	private GoogleMap mMap;
 	private Marker currentPosition;
 	private Circle radius;
@@ -37,7 +39,6 @@ public class MapPane extends Activity {
 		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
 				.getMap();
 		mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-		placeCurrentPositionMarker(9, 9);
 	}
 
 	// create or move current position marker
@@ -51,7 +52,9 @@ public class MapPane extends Activity {
 			// Create a new radius which shows roughly where the available
 			// chatrooms are
 			radius = mMap.addCircle(new CircleOptions().center(
-					new LatLng(lat, lon)).radius(100)); // meters
+					new LatLng(lat, lon)).radius(CHATROOM_RADIUS / ChatroomUtils.METERS_TO_FEET)); // meters
+			CameraUpdateFactory.newLatLng(new LatLng(lat, lon));
+			CameraUpdateFactory.zoomTo(4);
 		} else {
 			currentPosition.setPosition(new LatLng(lat, lon));
 			radius.setCenter(new LatLng(lat, lon));
@@ -59,14 +62,14 @@ public class MapPane extends Activity {
 	}
 
 	// set chatrooms on map to this list
-	protected void setChatrooms(ArrayList<Chatroom> chatrooms) {
-		for (int i = 0; i < chatrooms.size(); i++) {
-			this.chatrooms.add(createChatroom(chatrooms.get(i)));
+	protected void setChatrooms() {
+		for (int i = 0; i < chats.size(); i++) {
+			this.chatrooms.add(drawChatroom(chats.get(i)));
 		}
 	}
 
 	// create a single chatroom
-	private Marker createChatroom(Chatroom room) {
+	private Marker drawChatroom(Chatroom room) {
 		BitmapDescriptor m = null;
 		if (1 == new Random().nextInt()) { // needs to change available
 			m = BitmapDescriptorFactory
@@ -91,7 +94,7 @@ public class MapPane extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.action_list_view:
-			Intent intent = new Intent(this, FindChatActivity.class);
+			Intent intent = new Intent(this, FindChatListActivity.class);
 			startActivity(intent);
 	        return true;
 		} 
@@ -102,7 +105,7 @@ public class MapPane extends Activity {
 	protected void updateChatrooms() {
 		for (int i = 0; i < chatrooms.size(); i++) {
 			BitmapDescriptor m = null;
-			if (1 == new Random().nextInt()) { // needs to change available
+			if (chats.get(i).getCurDist() <= CHATROOM_RADIUS) { // needs to change available
 				m = BitmapDescriptorFactory
 						.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
 			} else {// unavailabe
@@ -111,5 +114,39 @@ public class MapPane extends Activity {
 			}
 			chatrooms.get(i).setIcon(m);
 		}
+	}
+
+	@Override
+	public void setNewLocation(Location location) {
+		super.setNewLocation(location);
+		if(location == null) {
+			return;
+		}
+		double lat, lon;
+		lat = location.getLatitude();
+		lon = location.getLongitude();
+		if (currentPosition == null) {
+			currentPosition = mMap.addMarker(new MarkerOptions()
+					.position(new LatLng(lat, lon))
+					.title("Me")
+					.icon(BitmapDescriptorFactory
+							.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+			// Create a new radius which shows roughly where the available
+			// chatrooms are
+			radius = mMap.addCircle(new CircleOptions().center(
+					new LatLng(lat, lon)).radius(100)); // meters
+		} else {
+			currentPosition.setPosition(new LatLng(lat, lon));
+			radius.setCenter(new LatLng(lat, lon));
+		}
+		updateChatrooms();
+		ChatroomUtils.setDistanceInFeet(chats, location);
+	}
+
+	@Override
+	public void addChatrooms(List<Chatroom> chatrooms) {
+		super.addChatrooms(chatrooms);
+		setChatrooms();
+		
 	}
 }

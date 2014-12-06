@@ -47,11 +47,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MapPane"
+            android:name=".FindChatMapActivity"
             android:label="@string/title_activity_default" >
         </activity>
         <activity
-            android:name=".FindChatActivity"
+            android:name=".FindChatListActivity"
             android:label="@string/title_activity_default" >
         </activity>
         <uses-library android:name="com.google.android.maps" />

@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.chatterspot.FindChatActivity" >
+    tools:context="com.example.chatterspot.FindChatListActivity" >
 
     <ListView android:id="@+id/chats" 
         android:layout_height="wrap_content"
