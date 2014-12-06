@@ -6,6 +6,7 @@ import java.util.Random;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -27,7 +28,7 @@ public class FindChatMapActivity extends FindChatActivity {
 	private GoogleMap mMap;
 	private Marker currentPosition;
 	private Circle radius;
-	private List<Marker> chatrooms;
+	private List<SpotMarker> chatrooms;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +36,24 @@ public class FindChatMapActivity extends FindChatActivity {
 		setContentView(R.layout.activity_map);
 		currentPosition = null;
 		radius = null;
-		chatrooms = new ArrayList<Marker>();
+		chatrooms = new ArrayList<SpotMarker>();
 		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
 				.getMap();
 		mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+			    @Override
+			    public void onInfoWindowClick(Marker marker) {
+			    		if(marker.equals(currentPosition)) {
+			    			return;
+			    		}
+			    		
+			    		for(int i = 0; i < chatrooms.size(); i ++) {
+			    			if(marker.equals(chatrooms.get(i).marker)) {
+			    				enterChat(chatrooms.get(i).chatroom);
+			    			}
+			    		}
+			    }
+		});
 	}
 
 	// create or move current position marker
@@ -64,23 +79,27 @@ public class FindChatMapActivity extends FindChatActivity {
 	// set chatrooms on map to this list
 	protected void setChatrooms() {
 		for (int i = 0; i < chats.size(); i++) {
-			this.chatrooms.add(drawChatroom(chats.get(i)));
+			this.chatrooms.add(new SpotMarker(chats.get(i), drawChatroom(chats.get(i))));
 		}
 	}
 
 	// create a single chatroom
 	private Marker drawChatroom(Chatroom room) {
 		BitmapDescriptor m = null;
+		String snippet = "";
 		if (1 == new Random().nextInt()) { // needs to change available
 			m = BitmapDescriptorFactory
 					.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-		} else {// unavailabe
+			snippet = "Click here to join";
+		} else {// Unavailable
 			m = BitmapDescriptorFactory
 					.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+			snippet = "Move " + (Math.abs(room.getCurDist() - CHATROOM_RADIUS)) + " closer to join"; 
 		}
 		return mMap.addMarker(new MarkerOptions()
 				.position(new LatLng(room.getLat(), room.getLon()))
-				.title(room.getName()).icon(m));
+				.title(room.getName()).icon(m)
+				.snippet(snippet));
 	}
 
 	@Override
@@ -112,7 +131,7 @@ public class FindChatMapActivity extends FindChatActivity {
 				m = BitmapDescriptorFactory
 						.defaultMarker(BitmapDescriptorFactory.HUE_RED);
 			}
-			chatrooms.get(i).setIcon(m);
+			chatrooms.get(i).marker.setIcon(m);
 		}
 	}
 
