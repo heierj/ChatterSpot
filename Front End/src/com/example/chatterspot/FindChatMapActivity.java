@@ -112,7 +112,7 @@ public class FindChatMapActivity extends FindChatActivity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.map_pane, menu);
 		return true;
-	}
+	}C=
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -164,7 +164,6 @@ public class FindChatMapActivity extends FindChatActivity {
 			radius.setCenter(new LatLng(lat, lon));
 		}
 		updateChatrooms();
-		ChatroomUtils.setDistanceInFeet(chats, location);
 	}
 
 	@Override
