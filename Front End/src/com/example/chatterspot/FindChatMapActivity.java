@@ -94,7 +94,13 @@ public class FindChatMapActivity extends FindChatActivity {
 		} else {// Unavailable
 			m = BitmapDescriptorFactory
 					.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-			snippet = "Move " + (Math.abs(room.getCurDist() - CHATROOM_RADIUS)) + " closer to join"; 
+			if(!locationManager.gpsEnabled()) {
+				snippet = "Please Enable GPS to join chatrooms";
+			}else if(locationSet) {
+				snippet = "Move " + (Math.abs(room.getCurDist() - CHATROOM_RADIUS)) + " closer to join"; 
+			}else {
+				snippet = "Finding your location ...";
+			}
 		}
 		return mMap.addMarker(new MarkerOptions()
 				.position(new LatLng(room.getLat(), room.getLon()))
