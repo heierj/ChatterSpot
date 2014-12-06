@@ -3,10 +3,13 @@ package com.example.chatterspot;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.Gson;
+
 import Client.ChatroomClient;
 import Shared.Chatroom;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -70,5 +73,15 @@ public abstract class FindChatActivity extends Activity {
 		if(location != null) {
 			locationSet = true;
 		}
+	}
+	
+	protected boolean enterChat(Chatroom chat) {
+		if(chat.getCurDist() <= CHATROOM_RADIUS) {
+			Intent intent = new Intent(this, ChatActivity.class);
+		    intent.putExtra(CHAT, new Gson().toJson(chat));
+		    startActivity(intent);
+		    return true;
+		}
+	    return false;
 	}
 }

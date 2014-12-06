@@ -3,8 +3,6 @@ package com.example.chatterspot;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.gson.Gson;
-
 import Shared.Chatroom;
 import Utils.ChatroomComparator;
 import Utils.ChatroomUtils;
@@ -139,12 +137,8 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 	    } else if (!locationSet){
 	    	// TODO: create a new dialog here
 	    	showGpsDialog();
-	    } else if(clickedChat.getCurDist() < CHATROOM_RADIUS) {
-		    Intent intent = new Intent(this, ChatActivity.class);
-		    intent.putExtra(CHAT, new Gson().toJson(clickedChat));
-		    startActivity(intent);
-	    } else {
-	    	// Don't let them enter
+	    } else if(!enterChat(clickedChat)) {
+	    	// don't let them enter
 	    	AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 	        dialog.setMessage(this.getResources().getString(R.string.not_in_chat_range));
 	        dialog.setPositiveButton(this.getResources().getString(R.string.ok), 
