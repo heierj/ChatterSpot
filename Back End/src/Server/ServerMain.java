@@ -14,7 +14,7 @@ import com.sun.net.httpserver.HttpServer;
  */
 
 public class ServerMain {
-	private static final int PORT_NUM = 4444;
+	private static final int PORT_NUM = 5200;
 	
 	/**
 	 * Begin running the ChatterSpot server

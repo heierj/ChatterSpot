@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
 import java.sql.Timestamp;
 
 import Database.DatabaseInteraction;
@@ -178,13 +177,15 @@ public class ClientHandler implements HttpHandler {
 		  return;
 		}
 		
-		Iterator<Message> itr = messages.iterator();
-		while (itr.hasNext()) {
-			// Iterate through the messages and remove those that are
-			// before the sinceTime timestamp
-			Message msg = itr.next();
-			if (msg.getTimestamp().before(sinceTime)) {
-				itr.remove();
+		if (sinceTime != null) {
+			Iterator<Message> itr = messages.iterator();
+			while (itr.hasNext()) {
+				// Iterate through the messages and remove those that are
+				// before the sinceTime timestamp
+				Message msg = itr.next();
+				if (msg.getTimestamp().before(sinceTime)) {
+					itr.remove();
+				}
 			}
 		}
 		
