@@ -49,12 +49,13 @@ public class DatabaseInteraction {
     // For now we ingore the timestamp, username, and chatroomID components of the Message
     String insertTableSQL = 
         "INSERT INTO messages" + 
-        "(text, chatroom_id, user_name, timestamp) VALUES( ?, ?, ?, 'now')";
+        "(text, chatroom_id, user_name, timestamp) VALUES(?, ?, ?, ?)";
     
     PreparedStatement statement = dbConnection.prepareStatement(insertTableSQL);
     statement.setString(1, message.getMessage());
     statement.setInt(2, message.getChatNumber());
     statement.setString(3, message.getUsername());
+    statement.setTimestamp(4, message.getTimestamp());
     statement.executeUpdate();
     statement.close();
   }
