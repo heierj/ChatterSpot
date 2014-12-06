@@ -40,9 +40,6 @@ public abstract class FindChatActivity extends Activity {
 				(LocationManager) getSystemService(Context.LOCATION_SERVICE),
 				this);
 		
-		if(!locationManager.gpsEnabled()) {
-			showGpsDialog();
-		}
 	}
 
 	/**
