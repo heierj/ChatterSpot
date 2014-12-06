@@ -58,7 +58,7 @@ public abstract class FindChatActivity extends Activity {
 					public void onClick(DialogInterface paramDialogInterface,
 							int paramInt) {
 						Intent myIntent = new Intent(
-								Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+								android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 						startActivity(myIntent);
 					}
 				});
