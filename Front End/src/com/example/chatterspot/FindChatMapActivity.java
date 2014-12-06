@@ -2,7 +2,6 @@ package com.example.chatterspot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -87,7 +86,7 @@ public class FindChatMapActivity extends FindChatActivity {
 	private Marker drawChatroom(Chatroom room) {
 		BitmapDescriptor m = null;
 		String snippet = "";
-		if (1 == new Random().nextInt()) { // needs to change available
+		if (room.getCurDist() <= CHATROOM_RADIUS) { // needs to change available
 			m = BitmapDescriptorFactory
 					.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
 			snippet = "Click here to join";
