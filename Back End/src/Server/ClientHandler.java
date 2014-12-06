@@ -4,7 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.sql.Timestamp;
 
 import Database.DatabaseInteraction;
 import Shared.Chatroom;
@@ -20,13 +25,15 @@ import com.sun.net.httpserver.HttpHandler;
  * @author Jordan Heier, Cameron Hardin, Will McNamara
  */
 public class ClientHandler implements HttpHandler {
+	private static final Map<Integer, Timestamp> timekeeper = new HashMap<>();
 
 	/*
 	 * Currently the following URL endpoints are supported:
 	 * 
 	 * GET:
-	 * 	"/chatroom?id=<chatID>" - Gets all the messages associated with a 
-	 * 						      particular chatroom id. A response will 
+	 * 	"/chatroom?id=<chatID>&[sincetime=<timestamp>]" - Gets all the messages associated with a 
+	 * 						      particular chatroom id. Optionally, if a "sincetime" parameter is
+	 * 							  specified, .A response will 
 	 * 							  be sent with the JSON format below.
 	 * 
 	 * 		[  {"username" : "<username>",
@@ -103,12 +110,23 @@ public class ClientHandler implements HttpHandler {
 				// Must be accessing all chatrooms API if no query string provided here.
 				getChatrooms(exchange);
 			} else {
-				String[] chatIdField = query.split("=");
+				// Must be getting messages for a particular chatroom
+				String[] queryParams = query.split("&");
 				
-				if (chatIdField[0].equals("id")) {
-					int chatId = Integer.parseInt(chatIdField[1]);
-					getMessages(exchange, chatId);
+				String[] chatIdField = queryParams[0].split("=");
+				int chatId = Integer.parseInt(chatIdField[1]);
+				
+				Timestamp timeSince;
+				
+				if (queryParams.length > 1) {
+					// If the user specified a timeSince field, then we respect it
+					String[] timeSinceField = queryParams[1].split("=");
+					timeSince = Timestamp.valueOf(timeSinceField[1]);
+				} else {
+					// Otherwise we get all messages (since the beginning of "time")
+					timeSince = null;
 				}
+				getMessages(exchange, chatId, timeSince);
 			}
 		} else {
 			// Invalid URL access
@@ -143,9 +161,12 @@ public class ClientHandler implements HttpHandler {
 	 * Gets all the messages associated with a particular chatID. These
 	 * messages will be returned directly via the HttpExchange object.
 	 */
-	private void getMessages(HttpExchange exchange, int chatID) {
+	private void getMessages(HttpExchange exchange, int chatID, Timestamp sinceTime) {
 		DatabaseInteraction dbi = new DatabaseInteraction();
 		List<Message> messages;
+		
+		// Block until a message is added to this chatroom after the sinceTime
+		blockUntilUpdate(chatID, sinceTime);
 		
 		try {
 			dbi.open();
@@ -155,6 +176,16 @@ public class ClientHandler implements HttpHandler {
 		  System.err.println("Unable to open database connection: " + e.getMessage());
 		  sendResponse(exchange, 500, null);
 		  return;
+		}
+		
+		Iterator<Message> itr = messages.iterator();
+		while (itr.hasNext()) {
+			// Iterate through the messages and remove those that are
+			// before the sinceTime timestamp
+			Message msg = itr.next();
+			if (msg.getTimestamp().before(sinceTime)) {
+				itr.remove();
+			}
 		}
 		
 		String jsonResponse = new Gson().toJson(messages);
@@ -221,8 +252,17 @@ public class ClientHandler implements HttpHandler {
 			sendResponse(exchange, 500, null);
 			return;
 		}
+
+		Message msg = new Gson().fromJson(json, Message.class);
 		
-		Message message = new Gson().fromJson(json, Message.class);
+		// The client will not provide a timestamp, so we want to recreate a new message with
+		// the message constructor that sets the time to current time.
+		Message message = new Message(msg.getUsername(), msg.getMessage(), msg.getChatNumber());
+		
+		// Update the last time a message was posted for this chatId
+		synchronized(timekeeper) {
+			timekeeper.put(message.getChatNumber(), message.getTimestamp());
+		}
 		
 		try {
 			DatabaseInteraction dbi = new DatabaseInteraction();
@@ -287,6 +327,29 @@ public class ClientHandler implements HttpHandler {
 			os.close();
 		} catch (IOException e) {
 			System.err.println("Unable to send response: " + e.getMessage());
+		}
+	}
+	
+	private static void blockUntilUpdate(int chatID, Timestamp sinceTime) {
+		
+		boolean updateMade = false;
+		while (!updateMade) {
+			Timestamp lastUpdate;
+			
+			synchronized(timekeeper) {
+				lastUpdate = timekeeper.get(chatID);
+			}
+			
+			if ( (sinceTime == null) || (lastUpdate != null && sinceTime.before(lastUpdate)) ) {
+				updateMade = true;
+			} else {
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					System.err.println("Sleeping thread awoke: " + e.getMessage());
+					// Just continue to in the loop
+				}
+			}
 		}
 	}
 }

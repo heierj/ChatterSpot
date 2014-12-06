@@ -23,7 +23,7 @@ public class Message {
 	public Message(String username, String message, int chatroomID) {
 		this.username = username;
 		this.message = message;
-		//this.timestamp = new Date(System.currentTimeMillis());
+		this.timestamp = new Timestamp(System.currentTimeMillis());
 		this.chatroomID = chatroomID;
 	}
 	
