@@ -104,8 +104,15 @@ public class ChatActivity extends Activity {
 		messages.addAll(newMessages);
 		adapter.notifyDataSetChanged();
 		if(!isFinishing()) {
-			client.loadMessages(2000);
+			client.loadMessages(0);
 		}
+	}
+	
+	/**
+	 * Returns the messages currently stored in the chat
+	 */
+	public List<Message> getMessages() {
+		return this.messages;
 	}
 
 	/**
