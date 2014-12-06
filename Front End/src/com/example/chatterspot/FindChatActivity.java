@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 
 import Client.ChatroomClient;
 import Shared.Chatroom;
+import Utils.ChatroomUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -124,6 +125,7 @@ public abstract class FindChatActivity extends Activity {
 		if (location != null) {
 			locationSet = true;
 		}
+		ChatroomUtils.setDistanceInFeet(chats, location);
 	}
 
 	protected void showLocationNotSetCreateDialog() {
