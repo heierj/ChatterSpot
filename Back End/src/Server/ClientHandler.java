@@ -165,6 +165,7 @@ public class ClientHandler implements HttpHandler {
 		DatabaseInteraction dbi = new DatabaseInteraction();
 		List<Message> messages;
 		
+		/*
 		if (sinceTime != null) {
 			Timestamp chatLastUpdated = null;
 			
@@ -176,7 +177,7 @@ public class ClientHandler implements HttpHandler {
 				// Block until a message is added to this chatroom after the sinceTime
 				blockUntilUpdate(chatID, sinceTime);
 			}
-		}
+		}*/
 		
 		try {
 			dbi.open();

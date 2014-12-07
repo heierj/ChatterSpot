@@ -120,7 +120,7 @@ public class ChatClient extends AbstractClient {
 	 * @return a list containing all the messages in the chat room
 	 */
 	public class LoadMessages extends AsyncTask<Timestamp, Void, List<Message>> {
-		private static final int LOAD_MESSAGE_TIMEOUT = 300000;
+		private static final int LOAD_MESSAGE_TIMEOUT = 30000;
 
 		/**
 		 * Loads all of the messages when a chat is newly entered. 

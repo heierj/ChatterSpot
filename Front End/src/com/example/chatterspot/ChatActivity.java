@@ -102,7 +102,10 @@ public class ChatActivity extends Activity {
 	public void addMessages(List<Message> newMessages) {
 		if(newMessages == null) return;
 		messages.addAll(newMessages);
-		adapter.notifyDataSetChanged();
+		
+		if (!newMessages.isEmpty()) {
+			adapter.notifyDataSetChanged();
+		}
 		
 		Timestamp lastMessageTime = null;
 		if (!messages.isEmpty()) {
