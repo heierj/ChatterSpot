@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import Shared.Chatroom;
 import Utils.ChatroomUtils;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
@@ -145,6 +146,25 @@ public class FindChatMapActivity extends FindChatActivity {
 		}
 	}
 
+	/**
+	 * Sends a newly created chat to the server
+	 */
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	  super.onActivityResult(requestCode, resultCode, data);
+	  if(resultCode == Activity.RESULT_OK) {
+		  String chatName = data.getStringExtra(CreateChatActivity.CHAT_NAME);
+		  double lat = data.getDoubleExtra(CreateChatActivity.CHAT_LATITUDE, Integer.MIN_VALUE);
+		  double lon = data.getDoubleExtra(CreateChatActivity.CHAT_LONGITUDE, Integer.MIN_VALUE);
+		  if(lat == Integer.MIN_VALUE || lon == Integer.MIN_VALUE) {
+			  createChat(chatName, null);
+			  return;
+		  }
+		  if(chatName == null) return;
+		  createChat(chatName, new LatLng(lat, lon)); 
+	  }
+	}
+	
 	@Override
 	public void setNewLocation(Location location) {
 		super.setNewLocation(location);

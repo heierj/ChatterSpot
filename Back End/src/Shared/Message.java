@@ -1,6 +1,8 @@
 package Shared;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * Represents a chat room message. Contains all needed 
@@ -23,7 +25,7 @@ public class Message {
 	public Message(String username, String message, int chatroomID) {
 		this.username = username;
 		this.message = message;
-		this.timestamp = new Timestamp(System.currentTimeMillis());
+		this.timestamp = new Timestamp((System.currentTimeMillis() / 1000) * 1000);
 		this.chatroomID = chatroomID;
 	}
 	

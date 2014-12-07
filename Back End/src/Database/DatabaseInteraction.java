@@ -46,7 +46,6 @@ public class DatabaseInteraction {
    * Adds a message to the database
    */
   public void addMessage(Message message) throws SQLException {
-    // For now we ingore the timestamp, username, and chatroomID components of the Message
     String insertTableSQL = 
         "INSERT INTO messages" + 
         "(text, chatroom_id, user_name, timestamp) VALUES(?, ?, ?, ?)";

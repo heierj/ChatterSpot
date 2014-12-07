@@ -30,7 +30,7 @@ public class ClientHandler implements HttpHandler {
 	 * Currently the following URL endpoints are supported:
 	 * 
 	 * GET:
-	 * 	"/chatroom?id=<chatID>&[sincetime=<timestamp>]" - Gets all the messages associated with a 
+	 * 	"/chatroom?id=<chatID>[&sincetime=<timestamp>]" - Gets all the messages associated with a 
 	 * 						      particular chatroom id. Optionally, if a "sincetime" parameter is
 	 * 							  specified, .A response will 
 	 * 							  be sent with the JSON format below.
@@ -120,8 +120,8 @@ public class ClientHandler implements HttpHandler {
 				if (queryParams.length > 1) {
 					// If the user specified a timeSince field, then we respect it
 					String[] timeSinceField = queryParams[1].split("=");
-					timeSince = Timestamp.valueOf(timeSinceField[1]);
-				} else {
+					timeSince = new Timestamp(Long.parseLong(timeSinceField[1]));
+				} else { 
 					// Otherwise we get all messages (since the beginning of "time")
 					timeSince = null;
 				}
@@ -159,13 +159,24 @@ public class ClientHandler implements HttpHandler {
 	/**
 	 * Gets all the messages associated with a particular chatID. These
 	 * messages will be returned directly via the HttpExchange object.
+	 * If sinceTime is null, all the messages will be returned from the chat room.
 	 */
 	private void getMessages(HttpExchange exchange, int chatID, Timestamp sinceTime) {
 		DatabaseInteraction dbi = new DatabaseInteraction();
 		List<Message> messages;
 		
-		// Block until a message is added to this chatroom after the sinceTime
-		blockUntilUpdate(chatID, sinceTime);
+		if (sinceTime != null) {
+			Timestamp chatLastUpdated = null;
+			
+			synchronized(timekeeper) {
+				chatLastUpdated = timekeeper.get(chatID);
+			}
+			
+			if (chatLastUpdated == null || !sinceTime.before(chatLastUpdated)) {
+				// Block until a message is added to this chatroom after the sinceTime
+				blockUntilUpdate(chatID, sinceTime);
+			}
+		}
 		
 		try {
 			dbi.open();
@@ -183,7 +194,7 @@ public class ClientHandler implements HttpHandler {
 				// Iterate through the messages and remove those that are
 				// before the sinceTime timestamp
 				Message msg = itr.next();
-				if (msg.getTimestamp().before(sinceTime)) {
+				if (!msg.getTimestamp().after(sinceTime)) {
 					itr.remove();
 				}
 			}
@@ -341,7 +352,7 @@ public class ClientHandler implements HttpHandler {
 				lastUpdate = timekeeper.get(chatID);
 			}
 			
-			if ( (sinceTime == null) || (lastUpdate != null && sinceTime.before(lastUpdate)) ) {
+			if ( (lastUpdate != null && sinceTime.before(lastUpdate)) ) {
 				updateMade = true;
 			} else {
 				try {
