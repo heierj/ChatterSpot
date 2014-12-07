@@ -1,5 +1,6 @@
 package com.example.chatterspot;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,11 +101,19 @@ public class ChatActivity extends Activity {
 	 */
 	public void addMessages(List<Message> newMessages) {
 		if(newMessages == null) return;
-		messages.clear();
 		messages.addAll(newMessages);
 		adapter.notifyDataSetChanged();
+		
+		Timestamp lastMessageTime = null;
+		if (!messages.isEmpty()) {
+			Message lastMessage = messages.get(messages.size() - 1);
+			lastMessageTime = lastMessage.getTimestamp();
+		} else {
+			lastMessageTime = new Timestamp(0);
+		}
+		
 		if(!isFinishing()) {
-			client.loadMessages(0);
+			client.loadMessages(lastMessageTime);
 		}
 	}
 	
