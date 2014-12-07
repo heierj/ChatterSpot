@@ -66,7 +66,7 @@ public class FindChatMapActivity extends FindChatActivity {
 	private Marker drawChatroom(Chatroom room) {
 		BitmapDescriptor m = null;
 		String snippet = "";
-		if (locationSet && room.getCurDist() <= CHATROOM_RADIUS) { // needs to change available
+		if (locationSet && room.getCurDist() != 0 && room.getCurDist() <= CHATROOM_RADIUS) { // needs to change available
 			m = BitmapDescriptorFactory
 					.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
 			snippet = "Click here to join";
@@ -120,7 +120,7 @@ public class FindChatMapActivity extends FindChatActivity {
 				if(!locationManager.providerEnabled()) {
 					snippet = "Please Enable GPS to join chatrooms";
 				}else if(locationSet) {
-					snippet = "Move " + (Math.abs(chats.get(i).getCurDist() - CHATROOM_RADIUS)) + " closer to join"; 
+					snippet = "Move " + (Math.round(Math.abs(chats.get(i).getCurDist() - CHATROOM_RADIUS))) + " feet closer to join"; 
 				}else {
 					snippet = "Finding your location ...";
 				}
