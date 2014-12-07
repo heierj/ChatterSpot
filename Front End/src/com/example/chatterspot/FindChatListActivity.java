@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 
 import Shared.Chatroom;
 import Utils.ChatroomComparator;
@@ -47,6 +48,9 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 		switch(item.getItemId()) {
 		case R.id.action_add_chat:
 			Intent intent = new Intent(this, CreateChatActivity.class);
+			intent.putExtra(LAT, locationManager.getLocation().getLatitude());
+			intent.putExtra(LONG, locationManager.getLocation().getLongitude());
+			
 			startActivityForResult(intent, 0);
 	        return true;
 	        

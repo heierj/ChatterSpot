@@ -30,7 +30,9 @@ public class CreateChatActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_chat);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
+		Intent intent = getIntent();
+		String latString = intent.getStringExtra(FindChatActivity.LAT);
+		String lonString = intent.getStringExtra(FindChatActivity.LONG);
 		//map fragment
 		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
 				.getMap();
@@ -56,13 +58,12 @@ public class CreateChatActivity extends Activity {
 		
 	//create marker itself
 	double lat, lon;
-	Location location = null;
-	lat = location.getLatitude();
-	lon = location.getLongitude();
+	lat = Double.valueOf(latString);
+	lon = Double.valueOf(lonString);
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 18));
 		mMap.addMarker(new MarkerOptions()
 				.position(new LatLng(lat, lon))
-				.title("Me")
+				.title("New Chatroom Location")
 				.icon(BitmapDescriptorFactory
 				.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))).setDraggable(true);
 	}
