@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import Shared.Chatroom;
 import Utils.ChatroomUtils;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
@@ -162,7 +163,7 @@ public class FindChatMapActivity extends FindChatActivity {
 							.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 			// Create a new radius which shows roughly where the available
 			// chatrooms are
-			radius = mMap.addCircle(new CircleOptions().center(
+			radius = mMap.addCircle(new CircleOptions().strokeColor(Color.rgb(51, 102, 200)).fillColor(0x55336699).strokeWidth(3).center(
 					new LatLng(lat, lon)).radius(CHATROOM_RADIUS / ChatroomUtils.METERS_TO_FEET)); // meters
 		} else {
 			currentPosition.setPosition(new LatLng(lat, lon));
