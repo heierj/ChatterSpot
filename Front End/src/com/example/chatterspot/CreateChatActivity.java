@@ -58,7 +58,7 @@ public class CreateChatActivity extends Activity {
 	});
 		
 	//create marker itself
-		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 18));
+		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 17));
 		mMap.addMarker(new MarkerOptions()
 				.position(new LatLng(lat, lon))
 				.title("New Chatroom Location")

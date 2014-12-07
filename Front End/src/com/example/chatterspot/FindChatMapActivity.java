@@ -177,7 +177,7 @@ public class FindChatMapActivity extends FindChatActivity {
 		lat = location.getLatitude();
 		lon = location.getLongitude();
 		if (currentPosition == null) {
-			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 18));
+			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 17));
 			currentPosition = mMap.addMarker(new MarkerOptions()
 					.position(new LatLng(lat, lon))
 					.title("Me")
