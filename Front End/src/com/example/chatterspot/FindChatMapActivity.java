@@ -115,6 +115,8 @@ public class FindChatMapActivity extends FindChatActivity {
 	        
 		case R.id.action_add_chat:
 			intent = new Intent(this, CreateChatActivity.class);
+			intent.putExtra(LAT, locationManager.getLocation().getLatitude());
+			intent.putExtra(LONG, locationManager.getLocation().getLongitude());
 			startActivityForResult(intent, 0);
 	        return true;
 		} 
