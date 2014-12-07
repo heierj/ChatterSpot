@@ -3,6 +3,7 @@ package com.example.chatterspot;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
 import Client.ChatroomClient;
@@ -16,7 +17,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 
 public abstract class FindChatActivity extends Activity {
 	protected static final int CHATROOM_RADIUS = 50;
@@ -40,7 +40,6 @@ public abstract class FindChatActivity extends Activity {
 		locationManager = new FindChatLocationManager(
 				(LocationManager) getSystemService(Context.LOCATION_SERVICE),
 				this);
-		
 	}
 
 	/**
@@ -82,16 +81,21 @@ public abstract class FindChatActivity extends Activity {
 		chats.addAll(chatrooms);
 	}
 
-	protected void createChat(String chatName) {
-		Location lastLocation = locationManager.getLocation();
-
-		if (lastLocation == null) {
+	protected void createChat(String chatName, LatLng latLng) {
+		if(latLng != null) {
+		Chatroom chat = new Chatroom(chatName, null, 0,
+					latLng.latitude, latLng.longitude);
+		client.createChat(chat);
+		return;
+		}
+		
+		Location location = locationManager.getLocation();
+		if (location == null) {
 			showLocationNotSetCreateDialog();
 			return;
 		}
-
 		Chatroom chat = new Chatroom(chatName, null, 0,
-				lastLocation.getLatitude(), lastLocation.getLongitude());
+				location.getLatitude(), location.getLongitude());
 		client.createChat(chat);
 	}
 

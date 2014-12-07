@@ -3,6 +3,8 @@ package com.example.chatterspot;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import Shared.Chatroom;
 import Utils.ChatroomComparator;
 import android.app.Activity;
@@ -94,9 +96,14 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 	  super.onActivityResult(requestCode, resultCode, data);
 	  if(resultCode == Activity.RESULT_OK) {
 		  String chatName = data.getStringExtra(CreateChatActivity.CHAT_NAME);
+		  String latString = data.getStringExtra(CreateChatActivity.CHAT_LATITUDE);
+		  String lonString = data.getStringExtra(CreateChatActivity.CHAT_LONGITUDE);
+		  if(latString == null || latString == "" || lonString == null || lonString == "") {
+			  createChat(chatName, null);
+			  return;
+		  }
 		  if(chatName == null) return;
-		  createChat(chatName);
-		  
+		  createChat(chatName, new LatLng(Double.valueOf(latString), Double.valueOf(lonString))); 
 	  }
 	}
 
