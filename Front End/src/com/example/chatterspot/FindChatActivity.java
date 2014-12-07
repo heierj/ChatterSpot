@@ -19,7 +19,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 
 public abstract class FindChatActivity extends Activity {
-	protected static final int CHATROOM_RADIUS = 50;
+	protected static final int CHATROOM_RADIUS = 300;
 	public final static String CHAT = "com.example.chatterspot.CHAT";
 	public final static String LONG = "com.example.chatterspot.LONG";
 	public final static String LAT = "com.example.chatterspot.LAT";
