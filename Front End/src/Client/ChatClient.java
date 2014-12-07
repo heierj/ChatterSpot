@@ -4,15 +4,18 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import Shared.Message;
 import android.os.AsyncTask;
+import android.os.Build;
 
 import com.example.chatterspot.ChatActivity;
 import com.google.gson.Gson;
@@ -36,11 +39,19 @@ public class ChatClient extends AbstractClient {
 	 * @param message the message to be sent
 	 */
 	public void sendMessage(Message message) {
-		new SendMessage().execute(message);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			new SendMessage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, message);
+		} else {
+			new SendMessage().execute(message);
+		}
 	}
 
 	public void loadMessages(Timestamp sinceTime) {
-		new LoadMessages().execute(sinceTime);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			new LoadMessages().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, sinceTime);
+		} else {
+			new LoadMessages().execute(sinceTime);
+		}
 	}
 
 	/**
@@ -122,8 +133,9 @@ public class ChatClient extends AbstractClient {
 			url = SERVER_URL + "/chatroom?id=" + chat.getChatId();
 
 			if (params.length == 1) {
-				url += "&sincetime=" + params[0].toString();
+				url += "&sincetime=" + params[0].getTime();
 			}
+
 			
 			// Open the HTTP connection
 			HttpURLConnection client = openConnection(url, false, true);
