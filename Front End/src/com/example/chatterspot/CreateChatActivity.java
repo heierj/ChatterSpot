@@ -33,6 +33,7 @@ public class CreateChatActivity extends Activity {
 		Intent intent = getIntent();
 		double lat = intent.getDoubleExtra(FindChatActivity.LAT, Integer.MIN_VALUE);
 		double lon = intent.getDoubleExtra(FindChatActivity.LONG, Integer.MIN_VALUE);
+		latlng = new LatLng(lat, lon);
 		//map fragment
 		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
 				.getMap();

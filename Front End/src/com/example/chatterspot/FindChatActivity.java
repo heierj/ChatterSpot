@@ -81,6 +81,9 @@ public abstract class FindChatActivity extends Activity {
 			return;
 		chats.clear();
 		chats.addAll(chatrooms);
+		if(locationManager.getLocation() != null) {
+			setNewLocation(locationManager.getLocation());
+		}
 	}
 
 	protected void createChat(String chatName, LatLng latLng) {

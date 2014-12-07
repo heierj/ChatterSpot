@@ -102,7 +102,7 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 		  String chatName = data.getStringExtra(CreateChatActivity.CHAT_NAME);
 		  double lat = data.getDoubleExtra(CreateChatActivity.CHAT_LATITUDE, Integer.MIN_VALUE);
 		  double lon = data.getDoubleExtra(CreateChatActivity.CHAT_LONGITUDE, Integer.MIN_VALUE);
-		  if(lat == Integer.MAX_VALUE || lon == Integer.MIN_VALUE) {
+		  if(lat == Integer.MIN_VALUE || lon == Integer.MIN_VALUE) {
 			  createChat(chatName, null);
 			  return;
 		  }
