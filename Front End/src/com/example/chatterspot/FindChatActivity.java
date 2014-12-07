@@ -3,6 +3,7 @@ package com.example.chatterspot;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
 import Client.ChatroomClient;
@@ -16,11 +17,12 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 
 public abstract class FindChatActivity extends Activity {
 	protected static final int CHATROOM_RADIUS = 50;
 	public final static String CHAT = "com.example.chatterspot.CHAT";
+	public final static String LONG = "com.example.chatterspot.LONG";
+	public final static String LAT = "com.example.chatterspot.LAT";
 	protected ArrayList<Chatroom> chats;
 	protected ChatroomClient client;
 	protected boolean locationSet;
@@ -40,7 +42,6 @@ public abstract class FindChatActivity extends Activity {
 		locationManager = new FindChatLocationManager(
 				(LocationManager) getSystemService(Context.LOCATION_SERVICE),
 				this);
-		
 	}
 
 	/**
@@ -58,7 +59,7 @@ public abstract class FindChatActivity extends Activity {
 					public void onClick(DialogInterface paramDialogInterface,
 							int paramInt) {
 						Intent myIntent = new Intent(
-								Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+								android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 						startActivity(myIntent);
 					}
 				});
@@ -80,18 +81,26 @@ public abstract class FindChatActivity extends Activity {
 			return;
 		chats.clear();
 		chats.addAll(chatrooms);
+		if(locationManager.getLocation() != null) {
+			setNewLocation(locationManager.getLocation());
+		}
 	}
 
-	protected void createChat(String chatName) {
-		Location lastLocation = locationManager.getLocation();
-
-		if (lastLocation == null) {
+	protected void createChat(String chatName, LatLng latLng) {
+		if(latLng != null) {
+		Chatroom chat = new Chatroom(chatName, null, 0,
+					latLng.latitude, latLng.longitude);
+		client.createChat(chat);
+		return;
+		}
+		
+		Location location = locationManager.getLocation();
+		if (location == null) {
 			showLocationNotSetCreateDialog();
 			return;
 		}
-
 		Chatroom chat = new Chatroom(chatName, null, 0,
-				lastLocation.getLatitude(), lastLocation.getLongitude());
+				location.getLatitude(), location.getLongitude());
 		client.createChat(chat);
 	}
 

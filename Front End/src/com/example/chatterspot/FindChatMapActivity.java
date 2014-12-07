@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import Shared.Chatroom;
 import Utils.ChatroomUtils;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
@@ -57,6 +58,10 @@ public class FindChatMapActivity extends FindChatActivity {
 
 	// set chatrooms on map to this list
 	private void setChatrooms() {
+		for(SpotMarker spotMarker : chatrooms) {
+			spotMarker.marker.remove();
+		}
+		this.chatrooms.clear();
 		for (int i = 0; i < chats.size(); i++) {
 			this.chatrooms.add(new SpotMarker(chats.get(i), drawChatroom(chats.get(i))));
 		}
@@ -66,7 +71,7 @@ public class FindChatMapActivity extends FindChatActivity {
 	private Marker drawChatroom(Chatroom room) {
 		BitmapDescriptor m = null;
 		String snippet = "";
-		if (locationSet && room.getCurDist() != 0 && room.getCurDist() <= CHATROOM_RADIUS) { // needs to change available
+		if (locationSet && room.getCurDist() <= CHATROOM_RADIUS) { // needs to change available
 			m = BitmapDescriptorFactory
 					.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
 			snippet = "Click here to join";
@@ -96,10 +101,20 @@ public class FindChatMapActivity extends FindChatActivity {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent;
 		switch(item.getItemId()) {
 		case R.id.action_list_view:
-			Intent intent = new Intent(this, FindChatListActivity.class);
+			intent = new Intent(this, FindChatListActivity.class);
 			startActivity(intent);
+	        return true;
+	        
+		case R.id.action_refresh_chat:
+			client.loadChats();
+			return true;
+	        
+		case R.id.action_add_chat:
+			intent = new Intent(this, CreateChatActivity.class);
+			startActivityForResult(intent, 0);
 	        return true;
 		} 
 		return super.onOptionsItemSelected(item);
@@ -148,7 +163,7 @@ public class FindChatMapActivity extends FindChatActivity {
 							.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 			// Create a new radius which shows roughly where the available
 			// chatrooms are
-			radius = mMap.addCircle(new CircleOptions().center(
+			radius = mMap.addCircle(new CircleOptions().strokeColor(Color.rgb(51, 102, 200)).fillColor(0x55336699).strokeWidth(3).center(
 					new LatLng(lat, lon)).radius(CHATROOM_RADIUS / ChatroomUtils.METERS_TO_FEET)); // meters
 		} else {
 			currentPosition.setPosition(new LatLng(lat, lon));

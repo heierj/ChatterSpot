@@ -3,6 +3,9 @@ package com.example.chatterspot;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
+
 import Shared.Chatroom;
 import Utils.ChatroomComparator;
 import android.app.Activity;
@@ -45,6 +48,9 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 		switch(item.getItemId()) {
 		case R.id.action_add_chat:
 			Intent intent = new Intent(this, CreateChatActivity.class);
+			intent.putExtra(LAT, locationManager.getLocation().getLatitude());
+			intent.putExtra(LONG, locationManager.getLocation().getLongitude());
+			
 			startActivityForResult(intent, 0);
 	        return true;
 	        
@@ -66,9 +72,6 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 	@Override
 	public void updateChatrooms(List<Chatroom> chatrooms) {
 		super.updateChatrooms(chatrooms);
-		if(locationManager.getLocation() != null) {
-			setNewLocation(locationManager.getLocation());
-		}
 		adapter.notifyDataSetChanged();
 	}
 	
@@ -94,9 +97,14 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 	  super.onActivityResult(requestCode, resultCode, data);
 	  if(resultCode == Activity.RESULT_OK) {
 		  String chatName = data.getStringExtra(CreateChatActivity.CHAT_NAME);
+		  double lat = data.getDoubleExtra(CreateChatActivity.CHAT_LATITUDE, Integer.MIN_VALUE);
+		  double lon = data.getDoubleExtra(CreateChatActivity.CHAT_LONGITUDE, Integer.MIN_VALUE);
+		  if(lat == Integer.MIN_VALUE || lon == Integer.MIN_VALUE) {
+			  createChat(chatName, null);
+			  return;
+		  }
 		  if(chatName == null) return;
-		  createChat(chatName);
-		  
+		  createChat(chatName, new LatLng(lat, lon)); 
 	  }
 	}
 
