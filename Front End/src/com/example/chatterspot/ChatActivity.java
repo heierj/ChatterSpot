@@ -99,12 +99,18 @@ public class ChatActivity extends Activity {
 	 * @param newMessages the messages to be added
 	 */
 	public void addMessages(List<Message> newMessages) {
-		messages.clear();
 		messages.addAll(newMessages);
 		adapter.notifyDataSetChanged();
 		if(!isFinishing()) {
-			client.loadMessages(2000);
+			client.loadMessages();
 		}
+	}
+	
+	/**
+	 * Returns the messages currently stored in the chat
+	 */
+	public List<Message> getMessages() {
+		return this.messages;
 	}
 
 	/**
