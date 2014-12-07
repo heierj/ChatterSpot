@@ -101,8 +101,11 @@ public class ChatActivity extends Activity {
 	public void addMessages(List<Message> newMessages) {
 		messages.addAll(newMessages);
 		adapter.notifyDataSetChanged();
+		
+		Message lastMessage = newMessages.get(newMessages.size() - 1);
+		
 		if(!isFinishing()) {
-			client.loadMessages();
+			client.loadMessages(lastMessage.getTimestamp());
 		}
 	}
 	

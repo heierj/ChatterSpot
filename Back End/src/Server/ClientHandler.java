@@ -30,7 +30,7 @@ public class ClientHandler implements HttpHandler {
 	 * Currently the following URL endpoints are supported:
 	 * 
 	 * GET:
-	 * 	"/chatroom?id=<chatID>&[sincetime=<timestamp>]" - Gets all the messages associated with a 
+	 * 	"/chatroom?id=<chatID>[&sincetime=<timestamp>]" - Gets all the messages associated with a 
 	 * 						      particular chatroom id. Optionally, if a "sincetime" parameter is
 	 * 							  specified, .A response will 
 	 * 							  be sent with the JSON format below.

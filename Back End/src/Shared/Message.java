@@ -1,6 +1,8 @@
 package Shared;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * Represents a chat room message. Contains all needed 
