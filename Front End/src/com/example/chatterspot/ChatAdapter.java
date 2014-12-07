@@ -1,6 +1,7 @@
 package com.example.chatterspot;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -36,8 +37,8 @@ public class ChatAdapter extends ArrayAdapter<Chatroom> {
 		// Prepare the time stamp
 		String timestamp = "";
 		if(chat.getTimestamp() != null) {
-			long time = chat.getTimestamp().getTime();
-			Date date = new Date(time);
+			Timestamp time = chat.getTimestamp();
+			Date date = new Date(time.getTime() - 10800000);
 			SimpleDateFormat df = new SimpleDateFormat("MM-dd-yyyy hh:mm a", Locale.US);
 			timestamp = "Created: " + df.format(date);
 		} 

@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import Shared.Chatroom;
 import Utils.ChatroomUtils;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
@@ -114,6 +115,8 @@ public class FindChatMapActivity extends FindChatActivity {
 	        
 		case R.id.action_add_chat:
 			intent = new Intent(this, CreateChatActivity.class);
+			intent.putExtra(LAT, locationManager.getLocation().getLatitude());
+			intent.putExtra(LONG, locationManager.getLocation().getLongitude());
 			startActivityForResult(intent, 0);
 	        return true;
 		} 
@@ -145,6 +148,25 @@ public class FindChatMapActivity extends FindChatActivity {
 		}
 	}
 
+	/**
+	 * Sends a newly created chat to the server
+	 */
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	  super.onActivityResult(requestCode, resultCode, data);
+	  if(resultCode == Activity.RESULT_OK) {
+		  String chatName = data.getStringExtra(CreateChatActivity.CHAT_NAME);
+		  double lat = data.getDoubleExtra(CreateChatActivity.CHAT_LATITUDE, Integer.MIN_VALUE);
+		  double lon = data.getDoubleExtra(CreateChatActivity.CHAT_LONGITUDE, Integer.MIN_VALUE);
+		  if(lat == Integer.MIN_VALUE || lon == Integer.MIN_VALUE) {
+			  createChat(chatName, null);
+			  return;
+		  }
+		  if(chatName == null) return;
+		  createChat(chatName, new LatLng(lat, lon)); 
+	  }
+	}
+	
 	@Override
 	public void setNewLocation(Location location) {
 		super.setNewLocation(location);
@@ -155,7 +177,7 @@ public class FindChatMapActivity extends FindChatActivity {
 		lat = location.getLatitude();
 		lon = location.getLongitude();
 		if (currentPosition == null) {
-			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 18));
+			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 17));
 			currentPosition = mMap.addMarker(new MarkerOptions()
 					.position(new LatLng(lat, lon))
 					.title("Me")

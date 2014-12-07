@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
 
 import Shared.Chatroom;
 import Utils.ChatroomComparator;

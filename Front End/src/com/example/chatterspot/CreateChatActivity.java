@@ -35,7 +35,7 @@ public class CreateChatActivity extends Activity {
 		double lon = intent.getDoubleExtra(FindChatActivity.LONG, Integer.MIN_VALUE);
 		latlng = new LatLng(lat, lon);
 		//map fragment
-		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
+		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map2))
 				.getMap();
 		mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 		mMap.setOnMarkerDragListener(new OnMarkerDragListener() {
@@ -58,7 +58,7 @@ public class CreateChatActivity extends Activity {
 	});
 		
 	//create marker itself
-		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 18));
+		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 17));
 		mMap.addMarker(new MarkerOptions()
 				.position(new LatLng(lat, lon))
 				.title("New Chatroom Location")
