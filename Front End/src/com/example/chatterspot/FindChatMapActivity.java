@@ -55,28 +55,8 @@ public class FindChatMapActivity extends FindChatActivity {
 		});
 	}
 
-	// create or move current position marker
-	protected void placeCurrentPositionMarker(double lat, double lon) {
-		if (currentPosition == null) {
-			currentPosition = mMap.addMarker(new MarkerOptions()
-					.position(new LatLng(lat, lon))
-					.title("Me")
-					.icon(BitmapDescriptorFactory
-							.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-			// Create a new radius which shows roughly where the available
-			// chatrooms are
-			radius = mMap.addCircle(new CircleOptions().center(
-					new LatLng(lat, lon)).radius(CHATROOM_RADIUS / ChatroomUtils.METERS_TO_FEET)); // meters
-			CameraUpdateFactory.newLatLng(new LatLng(lat, lon));
-			CameraUpdateFactory.zoomTo(4);
-		} else {
-			currentPosition.setPosition(new LatLng(lat, lon));
-			radius.setCenter(new LatLng(lat, lon));
-		}
-	}
-
 	// set chatrooms on map to this list
-	protected void setChatrooms() {
+	private void setChatrooms() {
 		for (int i = 0; i < chats.size(); i++) {
 			this.chatrooms.add(new SpotMarker(chats.get(i), drawChatroom(chats.get(i))));
 		}
@@ -129,14 +109,24 @@ public class FindChatMapActivity extends FindChatActivity {
 	protected void updateChatrooms() {
 		for (int i = 0; i < chatrooms.size(); i++) {
 			BitmapDescriptor m = null;
-			if (chats.get(i).getCurDist() <= CHATROOM_RADIUS) { // needs to change available
+			String snippet = "";
+			if (locationSet && chats.get(i).getCurDist() <= CHATROOM_RADIUS) { // needs to change available
 				m = BitmapDescriptorFactory
 						.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-			} else {// unavailabe
+				snippet = "Click here to join";
+			} else {// Unavailable
 				m = BitmapDescriptorFactory
 						.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+				if(!locationManager.providerEnabled()) {
+					snippet = "Please Enable GPS to join chatrooms";
+				}else if(locationSet) {
+					snippet = "Move " + (Math.abs(chats.get(i).getCurDist() - CHATROOM_RADIUS)) + " closer to join"; 
+				}else {
+					snippet = "Finding your location ...";
+				}
 			}
 			chatrooms.get(i).marker.setIcon(m);
+			chatrooms.get(i).marker.setSnippet(snippet);
 		}
 	}
 
@@ -150,6 +140,7 @@ public class FindChatMapActivity extends FindChatActivity {
 		lat = location.getLatitude();
 		lon = location.getLongitude();
 		if (currentPosition == null) {
+			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 18));
 			currentPosition = mMap.addMarker(new MarkerOptions()
 					.position(new LatLng(lat, lon))
 					.title("Me")
@@ -158,7 +149,7 @@ public class FindChatMapActivity extends FindChatActivity {
 			// Create a new radius which shows roughly where the available
 			// chatrooms are
 			radius = mMap.addCircle(new CircleOptions().center(
-					new LatLng(lat, lon)).radius(100)); // meters
+					new LatLng(lat, lon)).radius(CHATROOM_RADIUS / ChatroomUtils.METERS_TO_FEET)); // meters
 		} else {
 			currentPosition.setPosition(new LatLng(lat, lon));
 			radius.setCenter(new LatLng(lat, lon));

@@ -185,5 +185,10 @@ public class ChatroomClient extends AbstractClient {
 			return true;
 		}
 		
+		@Override
+		protected void onPostExecute(Boolean bool) {
+			loadChats();
+		}
+		
 	}
 }

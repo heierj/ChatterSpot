@@ -22,6 +22,7 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_find_chat);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		getActionBar().setTitle("Explore Chats");
 		 
@@ -50,7 +51,12 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 		case R.id.action_refresh_chat:
 			client.loadChats();
 			return true;
+			
+		case android.R.id.home:
+			onBackPressed();
+		    return true;
 		} 
+		
 		return super.onOptionsItemSelected(item);
 	}
 	

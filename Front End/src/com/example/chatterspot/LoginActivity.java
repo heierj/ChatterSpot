@@ -1,6 +1,8 @@
 package com.example.chatterspot;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -28,9 +30,27 @@ public class LoginActivity extends Activity {
 		
 		// Set up the singleton class of user
 	    String username = editText.getText().toString();
+	    if(username.length() < 3 || username.length() > 14) {
+	    	showUsernameDialog();
+	    	return;
+	    }
 	    User user = User.getInstance();
 	    user.setUsername(username);
 	    startActivity(intent);
 	    finish();
+	}
+	
+	protected void showUsernameDialog() {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+		dialog.setMessage(this.getResources().getString(
+				R.string.username_dialog));
+		dialog.setPositiveButton(this.getResources().getString(R.string.ok),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface paramDialogInterface,
+							int paramInt) {
+					}
+				});
+		dialog.show();
 	}
 }

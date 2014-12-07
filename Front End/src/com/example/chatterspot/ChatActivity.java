@@ -99,6 +99,8 @@ public class ChatActivity extends Activity {
 	 * @param newMessages the messages to be added
 	 */
 	public void addMessages(List<Message> newMessages) {
+		if(newMessages == null) return;
+		messages.clear();
 		messages.addAll(newMessages);
 		adapter.notifyDataSetChanged();
 		
