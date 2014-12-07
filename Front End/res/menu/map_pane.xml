@@ -6,4 +6,14 @@
           android:title="@string/view_as_list"
           android:showAsAction="ifRoom" />
     
+    <item android:id="@+id/action_refresh_chat"
+          android:icon="@drawable/ic_action_refresh"
+          android:title="@string/refresh"
+          android:showAsAction="ifRoom" />
+    
+    <item android:id="@+id/action_add_chat"
+          android:icon="@drawable/ic_action_new"
+          android:title="@string/add_chat"
+          android:showAsAction="ifRoom" />
+    
 </menu>

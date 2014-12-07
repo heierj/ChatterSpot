@@ -57,6 +57,10 @@ public class FindChatMapActivity extends FindChatActivity {
 
 	// set chatrooms on map to this list
 	private void setChatrooms() {
+		for(SpotMarker spotMarker : chatrooms) {
+			spotMarker.marker.remove();
+		}
+		this.chatrooms.clear();
 		for (int i = 0; i < chats.size(); i++) {
 			this.chatrooms.add(new SpotMarker(chats.get(i), drawChatroom(chats.get(i))));
 		}
@@ -96,10 +100,20 @@ public class FindChatMapActivity extends FindChatActivity {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent;
 		switch(item.getItemId()) {
 		case R.id.action_list_view:
-			Intent intent = new Intent(this, FindChatListActivity.class);
+			intent = new Intent(this, FindChatListActivity.class);
 			startActivity(intent);
+	        return true;
+	        
+		case R.id.action_refresh_chat:
+			client.loadChats();
+			return true;
+	        
+		case R.id.action_add_chat:
+			intent = new Intent(this, CreateChatActivity.class);
+			startActivityForResult(intent, 0);
 	        return true;
 		} 
 		return super.onOptionsItemSelected(item);
