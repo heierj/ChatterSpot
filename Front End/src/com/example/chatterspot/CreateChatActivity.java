@@ -35,7 +35,7 @@ public class CreateChatActivity extends Activity {
 		double lon = intent.getDoubleExtra(FindChatActivity.LONG, Integer.MIN_VALUE);
 		latlng = new LatLng(lat, lon);
 		//map fragment
-		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
+		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map2))
 				.getMap();
 		mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 		mMap.setOnMarkerDragListener(new OnMarkerDragListener() {
