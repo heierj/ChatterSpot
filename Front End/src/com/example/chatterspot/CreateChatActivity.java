@@ -31,8 +31,8 @@ public class CreateChatActivity extends Activity {
 		setContentView(R.layout.activity_create_chat);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		Intent intent = getIntent();
-		String latString = intent.getStringExtra(FindChatActivity.LAT);
-		String lonString = intent.getStringExtra(FindChatActivity.LONG);
+		double lat = intent.getDoubleExtra(FindChatActivity.LAT, Integer.MIN_VALUE);
+		double lon = intent.getDoubleExtra(FindChatActivity.LONG, Integer.MIN_VALUE);
 		//map fragment
 		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
 				.getMap();
@@ -57,9 +57,6 @@ public class CreateChatActivity extends Activity {
 	});
 		
 	//create marker itself
-	double lat, lon;
-	lat = Double.valueOf(latString);
-	lon = Double.valueOf(lonString);
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 18));
 		mMap.addMarker(new MarkerOptions()
 				.position(new LatLng(lat, lon))

@@ -100,14 +100,14 @@ public class FindChatListActivity extends FindChatActivity implements AdapterVie
 	  super.onActivityResult(requestCode, resultCode, data);
 	  if(resultCode == Activity.RESULT_OK) {
 		  String chatName = data.getStringExtra(CreateChatActivity.CHAT_NAME);
-		  String latString = data.getStringExtra(CreateChatActivity.CHAT_LATITUDE);
-		  String lonString = data.getStringExtra(CreateChatActivity.CHAT_LONGITUDE);
-		  if(latString == null || latString == "" || lonString == null || lonString == "") {
+		  double lat = data.getDoubleExtra(CreateChatActivity.CHAT_LATITUDE, Integer.MIN_VALUE);
+		  double lon = data.getDoubleExtra(CreateChatActivity.CHAT_LONGITUDE, Integer.MIN_VALUE);
+		  if(lat == Integer.MAX_VALUE || lon == Integer.MIN_VALUE) {
 			  createChat(chatName, null);
 			  return;
 		  }
 		  if(chatName == null) return;
-		  createChat(chatName, new LatLng(Double.valueOf(latString), Double.valueOf(lonString))); 
+		  createChat(chatName, new LatLng(lat, lon)); 
 	  }
 	}
 
