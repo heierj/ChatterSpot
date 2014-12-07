@@ -120,7 +120,7 @@ public class ClientHandler implements HttpHandler {
 				if (queryParams.length > 1) {
 					// If the user specified a timeSince field, then we respect it
 					String[] timeSinceField = queryParams[1].split("=");
-					timeSince = new Timestamp(Long.parseLong(timeSinceField[1]));
+					timeSince = new Timestamp(Long.parseLong(timeSinceField[1]) - 10800000);
 				} else { 
 					// Otherwise we get all messages (since the beginning of "time")
 					timeSince = null;
@@ -344,6 +344,8 @@ public class ClientHandler implements HttpHandler {
 	
 	private static void blockUntilUpdate(int chatID, Timestamp sinceTime) {
 		
+		System.out.println("Blocking sinceTime: " + sinceTime.toString());
+		
 		boolean updateMade = false;
 		while (!updateMade) {
 			Timestamp lastUpdate;
@@ -354,6 +356,7 @@ public class ClientHandler implements HttpHandler {
 			
 			if ( (lastUpdate != null && sinceTime.before(lastUpdate)) ) {
 				updateMade = true;
+				System.out.println("Update Made");
 			} else {
 				try {
 					Thread.sleep(50);
