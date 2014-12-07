@@ -6,7 +6,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public abstract class AbstractClient {
-	static final String SERVER_URL = "http://:4444";
+	
+	static final String SERVER_URL = "http://54.174.44.202:5200";
 	
 	/**
 	 * Given a string of the URL to connect to, this function will open the

@@ -112,7 +112,7 @@ public abstract class FindChatActivity extends Activity {
 	public void onResume() {
 		super.onResume(); // Always call the superclass method first
 		locationManager.resumeUpdates();
-		if(!locationManager.gpsEnabled()) {
+		if(!locationManager.providerEnabled()) {
 			showGpsDialog();
 		}
 		setNewLocation(locationManager.getLocation());
@@ -171,7 +171,7 @@ public abstract class FindChatActivity extends Activity {
 	}
 
 	protected boolean enterChat(Chatroom chat) {
-		if (!locationManager.gpsEnabled()) {
+		if (!locationManager.providerEnabled()) {
 			showGpsDialog();
 		} else if (!locationSet) {
 			showLocationNotSetDialog();

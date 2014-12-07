@@ -32,7 +32,7 @@ public class ChatroomClient extends AbstractClient {
 	public void loadChats() {
 		new LoadChats().execute();
 	}
-	
+		
 	
 	/**
 	 * Loads all the chats user can enter
