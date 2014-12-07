@@ -23,5 +23,6 @@
 	<string name="location_not_set">We are still trying to get your location. Please wait to join a chat.</string>
 	<string name="location_not_set_create">We are still trying to get your location. You cannot create a chat until your location is set</string>
 	<string name="username_dialog">Your username must be 3-14 characters.</string>
+	<string name="drag_to_set_location">Tap and hold marker to move chat location</string>
 
 </resources>

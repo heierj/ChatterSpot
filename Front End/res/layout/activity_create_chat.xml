@@ -4,6 +4,15 @@
     android:layout_gravity="center"
     android:orientation="vertical" >
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/drag_to_set_location"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_weight="4"
+        android:textSize="18sp" />
+
     <fragment
         android:id="@+id/map2"
         android:name="com.google.android.gms.maps.MapFragment"
@@ -18,20 +27,20 @@
         android:gravity="center"
         android:orientation="vertical" >
 
-            <EditText
-                android:id="@+id/enter_chat_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/enter_chat_name"
-                android:layout_marginBottom="5dp"
-                android:inputType="textPersonName" />
+        <EditText
+            android:id="@+id/enter_chat_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:hint="@string/enter_chat_name"
+            android:inputType="textPersonName" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:onClick="createChat"
-                android:text="@string/create_chat" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="createChat"
+            android:text="@string/create_chat" />
     </LinearLayout>
 
 </LinearLayout>
