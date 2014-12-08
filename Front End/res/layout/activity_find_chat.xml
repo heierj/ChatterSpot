@@ -10,8 +10,6 @@
 
     <ListView android:id="@+id/chats" 
         android:layout_height="wrap_content"
-		android:transcriptMode="alwaysScroll"
-        android:layout_above="@id/createMessage"
         android:layout_width="wrap_content">
     </ListView>
 
