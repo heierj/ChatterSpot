@@ -143,8 +143,12 @@ public class FindChatMapActivity extends FindChatActivity {
 					snippet = "Finding your location ...";
 				}
 			}
+			boolean t = chatrooms.get(i).marker.isInfoWindowShown();
 			chatrooms.get(i).marker.setIcon(m);
 			chatrooms.get(i).marker.setSnippet(snippet);
+			if(t) {
+				chatrooms.get(i).marker.showInfoWindow();
+			}
 		}
 	}
 
